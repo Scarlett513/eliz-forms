@@ -54,6 +54,12 @@
         }
 
         /* ====== 家配師選擇 ====== */
+        .store-label {
+            font-size: 12px; font-weight: 700; color: #94A3B8;
+            letter-spacing: 1px; margin: 12px 0 8px;
+        }
+        .store-label:first-child { margin-top: 0; }
+
         .stylist-grid {
             display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
         }
@@ -215,7 +221,7 @@
         <div id="screenStylist">
             <div class="card">
                 <div class="section-title">請選擇您的名字</div>
-                <div class="stylist-grid" id="stylistGrid">
+                <div id="stylistGrid">
                     <div class="loading">載入中...</div>
                 </div>
             </div>
@@ -358,18 +364,34 @@
                 var grid = document.getElementById('stylistGrid');
                 grid.innerHTML = '';
 
-                if (!data.stylists || data.stylists.length === 0) {
+                var hasData = (data.taipei && data.taipei.length > 0) ||
+                              (data.taichung && data.taichung.length > 0);
+                if (!hasData) {
                     grid.innerHTML = '<div class="empty-msg">尚無家配師資料</div>';
                     return;
                 }
 
-                data.stylists.forEach(function(name) {
-                    var btn = document.createElement('div');
-                    btn.className = 'stylist-btn';
-                    btn.textContent = name;
-                    btn.onclick = function() { selectStylist(name, btn); };
-                    grid.appendChild(btn);
-                });
+                function renderGroup(label, names) {
+                    if (!names || names.length === 0) return;
+                    var title = document.createElement('div');
+                    title.className = 'store-label';
+                    title.textContent = label;
+                    grid.appendChild(title);
+
+                    var row = document.createElement('div');
+                    row.className = 'stylist-grid';
+                    names.forEach(function(name) {
+                        var btn = document.createElement('div');
+                        btn.className = 'stylist-btn';
+                        btn.textContent = name;
+                        btn.onclick = function() { selectStylist(name, btn); };
+                        row.appendChild(btn);
+                    });
+                    grid.appendChild(row);
+                }
+
+                renderGroup('台北店', data.taipei);
+                renderGroup('台中店', data.taichung);
             })
             .catch(function(err) {
                 document.getElementById('stylistGrid').innerHTML =
