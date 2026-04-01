@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ELIZ MKT Dashboard</title>
+  <style>
+    :root {
+      --gold: #B59E6D; --gold-light: #D4C5A0;
+      --white: #FFFFFF; --gray: #F8FAFC; --dark: #333333; --border: #E2E8F0;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html { -webkit-text-size-adjust: 100%; }
+    body { margin: 0; padding: 0; background: var(--gray);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 16px; color: var(--dark); }
+
+    .container { width: 100%; max-width: 600px; margin: 0 auto; padding: 20px 20px 60px; }
+    header { margin-bottom: 24px; text-align: center; }
+    .brand-logo { font-size: 24px; font-weight: 900; color: var(--gold); letter-spacing: 2px; margin-bottom: 4px; }
+    .brand-subtitle { font-size: 13px; font-weight: 600; color: #94A3B8; letter-spacing: 1px; }
+
+    .card { background: var(--white); border-radius: 16px; border: 1px solid #F1F5F9;
+      padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
+    .section-title { font-size: 16px; font-weight: 800; margin-bottom: 16px; }
+
+    /* PIN */
+    .pin-wrap { text-align: center; padding: 12px 0; }
+    .pin-title { font-size: 15px; font-weight: 700; margin-bottom: 16px; color: #475569; }
+    .pin-input { width: 140px; padding: 14px; text-align: center; letter-spacing: 6px;
+      font-size: 22px; font-weight: 700; border: 2px solid var(--border); border-radius: 12px; outline: none; }
+    .pin-input:focus { border-color: var(--gold); }
+    .pin-error { color: #EF4444; font-size: 13px; font-weight: 600; margin-top: 10px; }
+    .submit-btn { width: 100%; padding: 14px; border: none; border-radius: 12px;
+      font-size: 16px; font-weight: 800; cursor: pointer; background: var(--gold);
+      color: #FFF; box-shadow: 0 4px 12px rgba(181,158,109,0.3); transition: 0.1s; }
+    .submit-btn:active { transform: scale(0.97); }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Stats */
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 4px; }
+    .stat-item { text-align: center; padding: 14px 8px; border-radius: 12px; border: 2px solid var(--border); }
+    .stat-num { font-size: 26px; font-weight: 900; color: var(--dark); }
+    .stat-label { font-size: 11px; font-weight: 700; color: #94A3B8; margin-top: 2px; }
+    .stat-item.warn { border-color: #FCD34D; background: #FFFBEB; }
+    .stat-item.warn .stat-num { color: #D97706; }
+    .stat-item.ok { border-color: #86EFAC; background: #F0FDF4; }
+    .stat-item.ok .stat-num { color: #16A34A; }
+    .stat-item.blue { border-color: #93C5FD; background: #EFF6FF; }
+    .stat-item.blue .stat-num { color: #2563EB; }
+    .stat-item.red { border-color: #FCA5A5; background: #FEF2F2; }
+    .stat-item.red .stat-num { color: #DC2626; }
+
+    /* Controls */
+    .controls-row { display: flex; gap: 8px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+    .month-select { padding: 8px 12px; border: 2px solid var(--border); border-radius: 10px;
+      font-size: 14px; font-weight: 700; color: var(--dark); background: var(--white);
+      outline: none; cursor: pointer; }
+    .month-select:focus { border-color: var(--gold); }
+    .icon-btn { padding: 8px 14px; border: 2px solid var(--border); border-radius: 10px;
+      background: var(--white); font-size: 13px; font-weight: 700; color: #64748B;
+      cursor: pointer; white-space: nowrap; transition: 0.15s; }
+    .icon-btn:hover { border-color: var(--gold-light); }
+    .icon-btn.primary { border-color: var(--gold); background: #FBF8F3; color: var(--gold); }
+
+    .filter-group { display: flex; gap: 6px; flex-wrap: wrap; }
+    .filter-btn { padding: 7px 12px; border: 2px solid var(--border); border-radius: 8px;
+      background: var(--white); font-size: 12px; font-weight: 700; color: #94A3B8;
+      cursor: pointer; transition: 0.15s; }
+    .filter-btn.active { border-color: var(--gold); background: #FBF8F3; color: var(--gold); }
+
+    /* Payment rows */
+    .payment-row { padding: 12px 14px; border: 2px solid var(--border); border-radius: 12px;
+      margin-bottom: 8px; }
+    .payment-row.pending   { border-color: #FCD34D; background: #FFFBEB; }
+    .payment-row.claimed   { border-color: #86EFAC; background: #F0FDF4; }
+    .payment-row.confirmed { border-color: #93C5FD; background: #EFF6FF; }
+    .payment-row.crm-missing { border-left: 4px solid #EF4444; }
+
+    .row-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    .row-amount { font-size: 17px; font-weight: 900; }
+    .row-date   { font-size: 12px; color: #94A3B8; margin-top: 2px; }
+    .row-mid { margin-top: 6px; font-size: 13px; color: #475569; }
+    .row-crm { margin-top: 4px; font-size: 12px; color: #94A3B8; }
+
+    .status-badge { font-size: 11px; font-weight: 700; padding: 3px 9px;
+      border-radius: 6px; white-space: nowrap; flex-shrink: 0; }
+    .badge-pending  { background: #FEF3C7; color: #D97706; }
+    .badge-claimed  { background: #DCFCE7; color: #16A34A; }
+    .badge-confirmed { background: #DBEAFE; color: #2563EB; }
+    .badge-crm { background: #FEE2E2; color: #DC2626; font-size: 10px; margin-left: 4px; }
+
+    .confirm-btn { padding: 6px 12px; border: 2px solid var(--gold); border-radius: 8px;
+      background: var(--white); color: var(--gold); font-size: 12px; font-weight: 700;
+      cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: 0.15s; }
+    .confirm-btn:hover { background: #FBF8F3; }
+    .confirm-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* CSV 匯出 */
+    .csv-area { background: #F8FAFC; border: 1px solid var(--border); border-radius: 10px;
+      padding: 12px; font-size: 12px; font-family: monospace; white-space: pre; overflow-x: auto;
+      max-height: 300px; overflow-y: auto; color: #475569; }
+
+    .empty-msg { text-align: center; padding: 32px 16px; color: #94A3B8; font-size: 14px; font-weight: 600; }
+    .loading   { text-align: center; padding: 24px; color: #94A3B8; font-size: 14px; }
+
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: #333; color: #FFF; padding: 12px 24px; border-radius: 12px;
+      font-size: 14px; font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 100; }
+    .toast.show { opacity: 1; }
+
+    @media (max-width: 400px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- PIN 畫面 -->
+<div id="screenPin">
+  <div class="container">
+    <header>
+      <div class="brand-logo">ELIZ</div>
+      <div class="brand-subtitle">MKT Dashboard</div>
+    </header>
+    <div class="card">
+      <div class="pin-wrap">
+        <div class="pin-title">請輸入密碼</div>
+        <input type="password" id="pinInput" class="pin-input" maxlength="8"
+          placeholder="••••" onkeydown="if(event.key==='Enter')checkPin()">
+        <div class="pin-error" id="pinError" style="display:none">密碼錯誤，請重試</div>
+        <br><br>
+        <button class="submit-btn" style="max-width:160px;margin:0 auto;display:block" onclick="checkPin()">確認</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 主畫面 -->
+<div id="screenMain" style="display:none">
+  <div class="container">
+    <header>
+      <div class="brand-logo">ELIZ</div>
+      <div class="brand-subtitle">MKT Dashboard</div>
+    </header>
+
+    <!-- 統計 -->
+    <div class="card">
+      <div class="controls-row">
+        <select class="month-select" id="monthSelect" onchange="loadDashboard()"></select>
+        <button class="icon-btn" onclick="loadDashboard()">↻ 刷新</button>
+        <button class="icon-btn primary" onclick="showExport()">匯出報表</button>
+      </div>
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-item"><div class="stat-num">—</div><div class="stat-label">總筆數</div></div>
+        <div class="stat-item warn"><div class="stat-num">—</div><div class="stat-label">待認領</div></div>
+        <div class="stat-item ok"><div class="stat-num">—</div><div class="stat-label">已認領</div></div>
+        <div class="stat-item blue"><div class="stat-num">—</div><div class="stat-label">MKT已確認</div></div>
+        <div class="stat-item red"><div class="stat-num">—</div><div class="stat-label">CRM未齊</div></div>
+      </div>
+    </div>
+
+    <!-- 款項列表 -->
+    <div class="card">
+      <div class="controls-row">
+        <div class="filter-group">
+          <div class="filter-btn active" id="fAll"       onclick="setFilter('all')">全部</div>
+          <div class="filter-btn"        id="fPending"   onclick="setFilter('pending')">待認領</div>
+          <div class="filter-btn"        id="fClaimed"   onclick="setFilter('claimed')">待確認</div>
+          <div class="filter-btn"        id="fConfirmed" onclick="setFilter('confirmed')">已確認</div>
+        </div>
+      </div>
+      <div id="paymentList"><div class="loading">載入中...</div></div>
+    </div>
+
+    <!-- 匯出 -->
+    <div class="card" id="exportCard" style="display:none">
+      <div class="section-title">匯出報表</div>
+      <div class="controls-row">
+        <span style="font-size:13px;font-weight:700;color:#475569;">月份：<span id="exportMonthLabel"></span></span>
+        <button class="icon-btn primary" onclick="copyCSV()">複製 CSV</button>
+      </div>
+      <div class="csv-area" id="csvArea">載入中...</div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============ CONFIG ============
+const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbysXC8iOpXg9Y3_0qxZQmTz4xsCzsDWRUJufzUyjVVqCBobgTNAvA1Q5XYsILnrClha/exec';
+// 修改以下密碼後部署
+const MKT_PIN = '0000';
+// ================================
+
+let allPayments = [];
+let currentFilter = 'all';
+
+// ====== PIN ======
+function checkPin() {
+  const val = document.getElementById('pinInput').value;
+  if (val === MKT_PIN) {
+    document.getElementById('screenPin').style.display = 'none';
+    document.getElementById('screenMain').style.display = 'block';
+    initMonthSelect();
+    loadDashboard();
+  } else {
+    document.getElementById('pinError').style.display = 'block';
+    document.getElementById('pinInput').value = '';
+    document.getElementById('pinInput').focus();
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('pinInput').focus();
+});
+
+// ====== 月份選單 ======
+function initMonthSelect() {
+  const sel = document.getElementById('monthSelect');
+  const now = new Date();
+  for (let i = 0; i < 6; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const val = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+    const label = d.getFullYear() + '年' + (d.getMonth() + 1) + '月';
+    const opt = document.createElement('option');
+    opt.value = val; opt.textContent = label;
+    if (i === 0) opt.selected = true;
+    sel.appendChild(opt);
+  }
+  // 全部選項
+  const allOpt = document.createElement('option');
+  allOpt.value = ''; allOpt.textContent = '全部期間';
+  sel.appendChild(allOpt);
+}
+
+// ====== 載入 Dashboard ======
+function loadDashboard() {
+  const month = document.getElementById('monthSelect').value;
+  const url = GAS_API_URL + '?action=getMKTDashboard' + (month ? '&month=' + month : '');
+
+  document.getElementById('paymentList').innerHTML = '<div class="loading">載入中...</div>';
+
+  fetch(url)
+    .then(r => r.json())
+    .then(data => {
+      allPayments = data.payments || [];
+      renderStats(data);
+      renderList();
+    })
+    .catch(() => {
+      document.getElementById('paymentList').innerHTML = '<div class="empty-msg">載入失敗，請刷新</div>';
+    });
+}
+
+// ====== 統計 ======
+function renderStats(data) {
+  document.getElementById('statsGrid').innerHTML =
+    statItem(data.total,        '總筆數',    '') +
+    statItem(data.pending,      '待認領',    'warn') +
+    statItem(data.claimed,      '已認領',    'ok') +
+    statItem(data.mktConfirmed, 'MKT已確認', 'blue') +
+    statItem(data.crmIncomplete,'CRM未齊',   'red');
+}
+function statItem(num, label, cls) {
+  return '<div class="stat-item ' + cls + '"><div class="stat-num">' + (num || 0) +
+    '</div><div class="stat-label">' + label + '</div></div>';
+}
+
+// ====== 篩選 ======
+function setFilter(f) {
+  currentFilter = f;
+  ['All','Pending','Claimed','Confirmed'].forEach(x => {
+    document.getElementById('f' + x).classList.toggle('active', f === x.toLowerCase());
+  });
+  renderList();
+}
+
+// ====== 款項列表 ======
+function renderList() {
+  const el = document.getElementById('paymentList');
+  let filtered = allPayments;
+
+  if (currentFilter === 'pending')   filtered = allPayments.filter(p => p.status === '待認領');
+  if (currentFilter === 'claimed')   filtered = allPayments.filter(p => p.status === '已認領');
+  if (currentFilter === 'confirmed') filtered = allPayments.filter(p => p.status === 'MKT已確認');
+
+  if (filtered.length === 0) {
+    el.innerHTML = '<div class="empty-msg">目前沒有符合的記錄</div>';
+    return;
+  }
+
+  el.innerHTML = '';
+  filtered.forEach(function(p) {
+    const crmMissing = p.status !== '待認領' && (!p.clientType || !p.projectScale || !p.spaceType || !p.mainItems || !p.priceRange);
+    const rowClass = p.status === '待認領' ? 'pending'
+      : p.mktConfirmed ? 'confirmed' : 'claimed';
+    const badgeClass = p.status === '待認領' ? 'badge-pending'
+      : p.mktConfirmed ? 'badge-confirmed' : 'badge-claimed';
+    const badgeText = p.mktConfirmed ? 'MKT已確認' : p.status;
+
+    const div = document.createElement('div');
+    div.className = 'payment-row ' + rowClass + (crmMissing ? ' crm-missing' : '');
+    div.innerHTML =
+      '<div class="row-top">' +
+        '<div>' +
+          '<div class="row-amount">$' + Number(p.amount).toLocaleString() +
+            (crmMissing ? '<span class="status-badge badge-crm">CRM未齊</span>' : '') +
+          '</div>' +
+          '<div class="row-date">' + p.paymentDate +
+            (p.last5digits ? '　末五碼：' + p.last5digits : '') +
+            (p.customerName ? '　' + p.customerName : '') +
+          '</div>' +
+        '</div>' +
+        '<div style="display:flex;gap:6px;align-items:center;flex-shrink:0;">' +
+          '<span class="status-badge ' + badgeClass + '">' + badgeText + '</span>' +
+          (p.status === '已認領'
+            ? '<button class="confirm-btn" onclick="confirmPayment(' + p.rowIndex + ', this)">確認</button>'
+            : '') +
+        '</div>' +
+      '</div>' +
+      (p.stylist
+        ? '<div class="row-mid"><b>' + p.stylist + '</b>　訂編：' + (p.orderNumber || '—') + '</div>'
+        : '') +
+      (p.status !== '待認領' && p.clientType
+        ? '<div class="row-crm">' + [p.clientType, p.projectScale, p.spaceType, p.mainItems, p.priceRange].filter(Boolean).join('　') + '</div>'
+        : '');
+    el.appendChild(div);
+  });
+}
+
+// ====== MKT 確認 ======
+function confirmPayment(rowIndex, btn) {
+  btn.disabled = true; btn.textContent = '確認中...';
+  fetch(GAS_API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'confirmPayment', rowIndex: rowIndex })
+  })
+  .then(r => r.json())
+  .then(result => {
+    if (result.success) {
+      showToast('✅ 已確認');
+      // 更新本地資料
+      allPayments = allPayments.map(p => {
+        if (p.rowIndex === rowIndex) return Object.assign({}, p, { status: 'MKT已確認', mktConfirmed: true });
+        return p;
+      });
+      renderList();
+      loadDashboard();
+    } else {
+      showToast('失敗：' + (result.error || '未知錯誤'));
+      btn.disabled = false; btn.textContent = '確認';
+    }
+  })
+  .catch(() => { showToast('網路錯誤'); btn.disabled = false; btn.textContent = '確認'; });
+}
+
+// ====== 匯出 ======
+function showExport() {
+  const card = document.getElementById('exportCard');
+  card.style.display = 'block';
+  card.scrollIntoView({ behavior: 'smooth' });
+
+  const month = document.getElementById('monthSelect').value;
+  document.getElementById('exportMonthLabel').textContent = month || '全部';
+
+  const url = GAS_API_URL + '?action=exportReport' + (month ? '&month=' + month : '');
+  document.getElementById('csvArea').textContent = '載入中...';
+
+  fetch(url)
+    .then(r => r.json())
+    .then(data => {
+      const rows = [['匯款日期','金額','末五碼','客戶姓名','家配師','訂單編號','狀態','客戶類型','案件規模','空間類型','主要品項','購買金額區間']];
+      (data.payments || []).forEach(p => {
+        rows.push([p.paymentDate, p.amount, p.last5digits||'', p.customerName||'', p.stylist||'',
+          p.orderNumber||'', p.status, p.clientType||'', p.projectScale||'', p.spaceType||'',
+          p.mainItems||'', p.priceRange||'']);
+      });
+      document.getElementById('csvArea').textContent = rows.map(r => r.join('\t')).join('\n');
+    })
+    .catch(() => { document.getElementById('csvArea').textContent = '載入失敗'; });
+}
+
+function copyCSV() {
+  const text = document.getElementById('csvArea').textContent;
+  navigator.clipboard.writeText(text)
+    .then(() => showToast('✅ 已複製到剪貼簿，可貼到 Excel'))
+    .catch(() => showToast('複製失敗，請手動全選複製'));
+}
+
+// ====== Toast ======
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>

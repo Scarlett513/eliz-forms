@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ELIZ 會計後台</title>
+  <style>
+    :root {
+      --gold: #B59E6D; --gold-light: #D4C5A0;
+      --white: #FFFFFF; --gray: #F8FAFC; --dark: #333333; --border: #E2E8F0;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html { -webkit-text-size-adjust: 100%; }
+    body { margin: 0; padding: 0; background: var(--gray);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 16px; color: var(--dark); }
+
+    .container { width: 100%; max-width: 520px; margin: 0 auto; padding: 20px 20px 40px; }
+
+    header { margin-bottom: 24px; text-align: center; }
+    .brand-logo { font-size: 24px; font-weight: 900; color: var(--gold); letter-spacing: 2px; margin-bottom: 4px; }
+    .brand-subtitle { font-size: 13px; font-weight: 600; color: #94A3B8; letter-spacing: 1px; }
+
+    .card { background: var(--white); border-radius: 16px; border: 1px solid #F1F5F9;
+      padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
+
+    /* PIN */
+    .pin-wrap { text-align: center; padding: 12px 0; }
+    .pin-title { font-size: 15px; font-weight: 700; margin-bottom: 16px; color: #475569; }
+    .pin-input { width: 140px; padding: 14px; text-align: center; letter-spacing: 6px;
+      font-size: 22px; font-weight: 700; border: 2px solid var(--border); border-radius: 12px;
+      outline: none; }
+    .pin-input:focus { border-color: var(--gold); }
+    .pin-error { color: #EF4444; font-size: 13px; font-weight: 600; margin-top: 10px; }
+
+    /* Tabs */
+    .tab-bar { display: flex; background: var(--white); border-radius: 14px;
+      border: 1px solid #F1F5F9; margin-bottom: 16px; overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
+    .tab { flex: 1; padding: 13px 8px; text-align: center; font-size: 14px;
+      font-weight: 700; color: #94A3B8; cursor: pointer; transition: all 0.15s; }
+    .tab.active { background: var(--gold); color: var(--white); }
+
+    /* Form */
+    .section-title { font-size: 16px; font-weight: 800; margin-bottom: 16px; }
+    .input-group { margin-bottom: 16px; }
+    label.field-label { display: block; font-weight: 700; margin-bottom: 6px;
+      font-size: 13px; color: #475569; }
+    .req { color: #EF4444; }
+    input[type="text"], input[type="number"], input[type="date"] {
+      width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 10px;
+      font-size: 15px; font-weight: 600; background: #FFF; outline: none;
+      transition: border-color 0.2s; }
+    input:focus { border-color: var(--gold); }
+    .hint { font-size: 12px; color: #94A3B8; margin-top: 4px; }
+
+    .submit-btn { width: 100%; padding: 14px; border: none; border-radius: 12px;
+      font-size: 16px; font-weight: 800; cursor: pointer; background: var(--gold);
+      color: #FFF; box-shadow: 0 4px 12px rgba(181,158,109,0.3); transition: 0.1s; }
+    .submit-btn:active { transform: scale(0.97); }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Payment list */
+    .refresh-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .refresh-btn { padding: 8px 14px; border: 2px solid var(--border); border-radius: 10px;
+      background: var(--white); font-size: 13px; font-weight: 700; color: #64748B;
+      cursor: pointer; transition: 0.15s; }
+    .refresh-btn:hover { border-color: var(--gold-light); }
+    .filter-group { display: flex; gap: 6px; }
+    .filter-btn { padding: 7px 12px; border: 2px solid var(--border); border-radius: 8px;
+      background: var(--white); font-size: 12px; font-weight: 700; color: #94A3B8;
+      cursor: pointer; transition: 0.15s; }
+    .filter-btn.active { border-color: var(--gold); background: #FBF8F3; color: var(--gold); }
+
+    .payment-item { padding: 14px; border: 2px solid var(--border); border-radius: 12px;
+      margin-bottom: 10px; }
+    .payment-item.pending { border-color: #FCD34D; background: #FFFBEB; }
+    .payment-item.claimed { border-color: #86EFAC; background: #F0FDF4; }
+    .payment-item.confirmed { border-color: #93C5FD; background: #EFF6FF; }
+
+    .payment-main { display: flex; justify-content: space-between; align-items: flex-start; }
+    .payment-amount { font-size: 18px; font-weight: 900; color: var(--dark); }
+    .payment-date { font-size: 13px; color: #94A3B8; font-weight: 600; margin-top: 2px; }
+    .payment-meta { font-size: 12px; color: #94A3B8; margin-top: 6px; }
+
+    .status-badge { font-size: 11px; font-weight: 700; padding: 3px 9px;
+      border-radius: 6px; white-space: nowrap; }
+    .badge-pending  { background: #FEF3C7; color: #D97706; }
+    .badge-claimed  { background: #DCFCE7; color: #16A34A; }
+    .badge-confirmed { background: #DBEAFE; color: #2563EB; }
+
+    .stylist-tag { font-size: 13px; font-weight: 700; color: var(--gold); margin-top: 4px; }
+    .order-tag   { font-size: 12px; color: #475569; }
+
+    .empty-msg { text-align: center; padding: 32px 16px; color: #94A3B8; font-size: 14px; font-weight: 600; }
+    .loading   { text-align: center; padding: 24px; color: #94A3B8; font-size: 14px; }
+
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: #333; color: #FFF; padding: 12px 24px; border-radius: 12px;
+      font-size: 14px; font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 100; }
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+
+<!-- PIN 畫面 -->
+<div id="screenPin">
+  <div class="container">
+    <header>
+      <div class="brand-logo">ELIZ</div>
+      <div class="brand-subtitle">會計後台</div>
+    </header>
+    <div class="card">
+      <div class="pin-wrap">
+        <div class="pin-title">請輸入密碼</div>
+        <input type="password" id="pinInput" class="pin-input" maxlength="8"
+          placeholder="••••" onkeydown="if(event.key==='Enter')checkPin()">
+        <div class="pin-error" id="pinError" style="display:none">密碼錯誤，請重試</div>
+        <br><br>
+        <button class="submit-btn" style="max-width:160px;margin:0 auto;display:block" onclick="checkPin()">確認</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 主畫面 -->
+<div id="screenMain" style="display:none">
+  <div class="container">
+    <header>
+      <div class="brand-logo">ELIZ</div>
+      <div class="brand-subtitle">會計後台</div>
+    </header>
+
+    <div class="tab-bar">
+      <div class="tab active" id="tabBtnAdd" onclick="switchTab('add')">新增款項</div>
+      <div class="tab" id="tabBtnStatus" onclick="switchTab('status')">認領狀況</div>
+    </div>
+
+    <!-- Tab 1: 新增款項 -->
+    <div id="tabAdd">
+      <div class="card">
+        <div class="section-title">新增待認領款項</div>
+        <form id="addForm">
+          <div class="input-group">
+            <label class="field-label">匯款日期 <span class="req">*</span></label>
+            <input type="date" id="paymentDate" required>
+          </div>
+          <div class="input-group">
+            <label class="field-label">金額 <span class="req">*</span></label>
+            <input type="number" id="amount" placeholder="例：150000" min="1" required>
+          </div>
+          <div class="input-group">
+            <label class="field-label">帳號末五碼</label>
+            <input type="text" id="last5digits" placeholder="例：57635" maxlength="5">
+            <div class="hint">若有同金額款項時，協助業務辨認</div>
+          </div>
+          <div class="input-group">
+            <label class="field-label">客戶姓名</label>
+            <input type="text" id="customerName" placeholder="選填">
+          </div>
+          <button type="submit" class="submit-btn" id="addBtn">送出</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Tab 2: 認領狀況 -->
+    <div id="tabStatus" style="display:none">
+      <div class="card">
+        <div class="refresh-row">
+          <div class="filter-group">
+            <div class="filter-btn active" id="filterAll" onclick="setFilter('all')">全部</div>
+            <div class="filter-btn" id="filterPending" onclick="setFilter('pending')">待認領</div>
+            <div class="filter-btn" id="filterClaimed" onclick="setFilter('claimed')">已認領</div>
+          </div>
+          <button class="refresh-btn" onclick="loadPayments()">↻ 刷新</button>
+        </div>
+        <div id="paymentList"><div class="loading">載入中...</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============ CONFIG ============
+const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbysXC8iOpXg9Y3_0qxZQmTz4xsCzsDWRUJufzUyjVVqCBobgTNAvA1Q5XYsILnrClha/exec';
+// 修改以下密碼後部署
+const ACCOUNTING_PIN = '0000';
+// ================================
+
+let currentFilter = 'all';
+
+// ====== PIN ======
+function checkPin() {
+  const val = document.getElementById('pinInput').value;
+  if (val === ACCOUNTING_PIN) {
+    document.getElementById('screenPin').style.display = 'none';
+    document.getElementById('screenMain').style.display = 'block';
+    setTodayDate();
+  } else {
+    document.getElementById('pinError').style.display = 'block';
+    document.getElementById('pinInput').value = '';
+    document.getElementById('pinInput').focus();
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('pinInput').focus();
+
+  document.getElementById('addForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    submitPayment();
+  });
+});
+
+function setTodayDate() {
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  document.getElementById('paymentDate').value = yyyy + '-' + mm + '-' + dd;
+}
+
+// ====== Tabs ======
+function switchTab(tab) {
+  document.getElementById('tabAdd').style.display    = tab === 'add'    ? 'block' : 'none';
+  document.getElementById('tabStatus').style.display = tab === 'status' ? 'block' : 'none';
+  document.getElementById('tabBtnAdd').classList.toggle('active', tab === 'add');
+  document.getElementById('tabBtnStatus').classList.toggle('active', tab === 'status');
+  if (tab === 'status') loadPayments();
+}
+
+// ====== 新增款項 ======
+function submitPayment() {
+  const date = document.getElementById('paymentDate').value;
+  const amount = document.getElementById('amount').value;
+  if (!date || !amount) { showToast('請填寫必填欄位'); return; }
+
+  const btn = document.getElementById('addBtn');
+  btn.disabled = true; btn.textContent = '送出中...';
+
+  fetch(GAS_API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      action:       'addPayment',
+      paymentDate:  date,
+      amount:       amount,
+      last5digits:  document.getElementById('last5digits').value.trim(),
+      customerName: document.getElementById('customerName').value.trim(),
+    })
+  })
+  .then(r => r.json())
+  .then(result => {
+    if (result.success) {
+      showToast('✅ 已新增，業務將收到待認領通知');
+      document.getElementById('addForm').reset();
+      setTodayDate();
+    } else {
+      showToast('送出失敗：' + (result.error || '未知錯誤'));
+    }
+    btn.disabled = false; btn.textContent = '送出';
+  })
+  .catch(() => { showToast('網路錯誤，請重試'); btn.disabled = false; btn.textContent = '送出'; });
+}
+
+// ====== 認領狀況 ======
+function setFilter(f) {
+  currentFilter = f;
+  ['All','Pending','Claimed'].forEach(x => {
+    document.getElementById('filter' + x).classList.toggle('active', f === x.toLowerCase());
+  });
+  loadPayments();
+}
+
+function loadPayments() {
+  document.getElementById('paymentList').innerHTML = '<div class="loading">載入中...</div>';
+  fetch(GAS_API_URL + '?action=getPayments&filter=' + currentFilter)
+    .then(r => r.json())
+    .then(data => renderPayments(data.payments || []))
+    .catch(() => {
+      document.getElementById('paymentList').innerHTML = '<div class="empty-msg">載入失敗，請刷新</div>';
+    });
+}
+
+function renderPayments(payments) {
+  const el = document.getElementById('paymentList');
+  if (payments.length === 0) {
+    el.innerHTML = '<div class="empty-msg">目前沒有記錄</div>';
+    return;
+  }
+
+  el.innerHTML = '';
+  payments.forEach(function(p) {
+    const statusClass = p.status === '待認領' ? 'pending'
+      : p.mktConfirmed ? 'confirmed' : 'claimed';
+    const badgeClass = p.status === '待認領' ? 'badge-pending'
+      : p.mktConfirmed ? 'badge-confirmed' : 'badge-claimed';
+    const badgeText = p.mktConfirmed ? 'MKT已確認' : p.status;
+
+    const item = document.createElement('div');
+    item.className = 'payment-item ' + statusClass;
+    item.innerHTML =
+      '<div class="payment-main">' +
+        '<div>' +
+          '<div class="payment-amount">$' + Number(p.amount).toLocaleString() + '</div>' +
+          '<div class="payment-date">' + p.paymentDate +
+            (p.last5digits ? '　末五碼：' + p.last5digits : '') +
+            (p.customerName ? '　' + p.customerName : '') +
+          '</div>' +
+        '</div>' +
+        '<span class="status-badge ' + badgeClass + '">' + badgeText + '</span>' +
+      '</div>' +
+      (p.stylist ? '<div class="stylist-tag">' + p.stylist + '</div>' +
+        '<div class="order-tag">訂編：' + (p.orderNumber || '—') + '</div>' : '') +
+      (p.claimedAt ? '<div class="payment-meta">認領時間：' + p.claimedAt + '</div>' : '');
+    el.appendChild(item);
+  });
+}
+
+// ====== Toast ======
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>

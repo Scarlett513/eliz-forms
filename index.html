@@ -1,580 +1,672 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ELIZ 業務回填系統</title>
-    <style>
-        :root {
-            --gold: #B59E6D;
-            --gold-light: #D4C5A0;
-            --white: #FFFFFF;
-            --gray: #F8FAFC;
-            --dark: #333333;
-            --border: #E2E8F0;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ELIZ 業務回填系統</title>
+  <style>
+    :root {
+      --gold: #B59E6D; --gold-light: #D4C5A0;
+      --white: #FFFFFF; --gray: #F8FAFC; --dark: #333333; --border: #E2E8F0;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html { -webkit-text-size-adjust: 100%; height: 100%; }
+    body { margin: 0; padding: 0; height: 100%; background: var(--gray);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 16px; color: var(--dark); }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        html { -webkit-text-size-adjust: 100%; height: 100%; }
+    .container { width: 100%; max-width: 500px; margin: 0 auto; padding: 20px 20px 40px; }
+    header { margin-bottom: 24px; text-align: center; }
+    .brand-logo { font-size: 24px; font-weight: 900; color: var(--gold); letter-spacing: 2px; margin-bottom: 4px; }
+    .brand-subtitle { font-size: 13px; font-weight: 600; color: #94A3B8; letter-spacing: 1px; }
 
-        body {
-            margin: 0; padding: 0; height: 100%;
-            background-color: var(--gray);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            font-size: 16px; color: var(--dark);
-        }
+    .card { background: var(--white); border-radius: 16px; border: 1px solid #F1F5F9;
+      padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
+    .section-title { font-size: 16px; font-weight: 800; margin-bottom: 16px; color: var(--dark); }
 
-        .container {
-            width: 100%; max-width: 500px;
-            margin: 0 auto; padding: 20px 20px 40px;
-        }
+    /* 家配師選擇 */
+    .store-label { font-size: 12px; font-weight: 700; color: #94A3B8; letter-spacing: 1px; margin: 12px 0 8px; }
+    .store-label:first-child { margin-top: 0; }
+    .stylist-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .stylist-btn { padding: 12px 8px; border: 2px solid var(--border); border-radius: 10px;
+      background: var(--white); font-size: 14px; font-weight: 700; color: var(--dark);
+      cursor: pointer; text-align: center; transition: all 0.15s; }
+    .stylist-btn:hover { border-color: var(--gold-light); }
+    .stylist-btn.active { border-color: var(--gold); background: #FBF8F3; color: var(--gold); }
 
-        header { margin-bottom: 24px; text-align: center; }
+    /* Tabs */
+    .tab-bar { display: flex; background: var(--white); border-radius: 14px;
+      border: 1px solid #F1F5F9; margin-bottom: 16px; overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
+    .tab { flex: 1; padding: 13px 8px; text-align: center; font-size: 14px;
+      font-weight: 700; color: #94A3B8; cursor: pointer; transition: all 0.15s; }
+    .tab.active { background: var(--gold); color: var(--white); }
 
-        .brand-logo {
-            font-size: 24px; font-weight: 900;
-            color: var(--gold); letter-spacing: 2px; margin-bottom: 4px;
-        }
+    /* 款項列表 */
+    .payment-item { padding: 14px; border: 2px solid #FCD34D; background: #FFFBEB;
+      border-radius: 12px; margin-bottom: 10px; cursor: pointer; transition: 0.15s; }
+    .payment-item:hover { border-color: var(--gold); }
+    .payment-amount { font-size: 18px; font-weight: 900; color: var(--dark); }
+    .payment-sub { font-size: 12px; color: #94A3B8; margin-top: 4px; font-weight: 600; }
+    .payment-hint { font-size: 11px; color: #D97706; font-weight: 700; margin-top: 6px; }
 
-        .brand-subtitle {
-            font-size: 13px; font-weight: 600;
-            color: #94A3B8; letter-spacing: 1px;
-        }
+    /* 客人列表 */
+    .customer-item { padding: 14px; border: 2px solid var(--border); border-radius: 12px;
+      margin-bottom: 10px; cursor: pointer; transition: all 0.15s; }
+    .customer-item:hover { border-color: var(--gold-light); }
+    .customer-item.active { border-color: var(--gold); background: #FBF8F3; }
+    .customer-item.done { border-color: #86EFAC; background: #F0FDF4; opacity: 0.7; pointer-events: none; }
+    .customer-name { font-size: 16px; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
+    .customer-meta { font-size: 12px; color: #94A3B8; font-weight: 500; }
+    .customer-done-badge { display: inline-block; font-size: 11px; font-weight: 700;
+      color: #16A34A; background: #DCFCE7; padding: 2px 8px; border-radius: 6px; margin-left: 8px; }
 
-        .card {
-            background: var(--white); border-radius: 16px;
-            border: 1px solid #F1F5F9; padding: 20px;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-        }
+    /* 表單 */
+    .input-group { margin-bottom: 16px; }
+    label.field-label { display: block; font-weight: 700; margin-bottom: 6px; font-size: 13px; color: #475569; }
+    .req { color: #EF4444; }
+    input[type="text"], textarea { width: 100%; padding: 12px; border: 2px solid var(--border);
+      border-radius: 10px; font-size: 15px; font-weight: 600; background: #FFF;
+      outline: none; transition: border-color 0.2s; }
+    input[type="text"]:focus, textarea:focus { border-color: var(--gold); }
+    textarea { resize: vertical; min-height: 60px; }
 
-        .section-title {
-            font-size: 16px; font-weight: 800;
-            margin-bottom: 16px; color: var(--dark);
-        }
+    .radio-group { display: flex; flex-wrap: wrap; gap: 8px; }
+    .radio-group label { padding: 10px 14px; border: 2px solid var(--border); border-radius: 10px;
+      font-size: 14px; font-weight: 600; color: #64748B; cursor: pointer; transition: 0.15s; }
+    .radio-group input { display: none; }
+    .radio-group label.selected { border-color: var(--gold); background: #FBF8F3; color: var(--gold); }
 
-        /* ====== 家配師選擇 ====== */
-        .store-label {
-            font-size: 12px; font-weight: 700; color: #94A3B8;
-            letter-spacing: 1px; margin: 12px 0 8px;
-        }
-        .store-label:first-child { margin-top: 0; }
+    .check-group { display: flex; flex-wrap: wrap; gap: 8px; }
+    .check-group label { padding: 10px 14px; border: 2px solid var(--border); border-radius: 10px;
+      font-size: 14px; font-weight: 600; color: #64748B; cursor: pointer; transition: 0.15s; }
+    .check-group input { display: none; }
+    .check-group label.selected { border-color: var(--gold); background: #FBF8F3; color: var(--gold); }
 
-        .stylist-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
-        }
+    /* 按鈕 */
+    .submit-btn { width: 100%; padding: 14px; border: none; border-radius: 12px;
+      font-size: 16px; font-weight: 800; cursor: pointer; background: var(--gold); color: #FFF;
+      box-shadow: 0 4px 12px rgba(181,158,109,0.3); transition: 0.1s; }
+    .submit-btn:active { transform: scale(0.97); }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .stylist-btn {
-            padding: 12px 8px; border: 2px solid var(--border);
-            border-radius: 10px; background: var(--white);
-            font-size: 14px; font-weight: 700; color: var(--dark);
-            cursor: pointer; text-align: center; transition: all 0.15s;
-        }
+    .back-btn { display: inline-block; padding: 8px 16px; border: 2px solid var(--border);
+      border-radius: 10px; background: var(--white); font-size: 13px; font-weight: 700;
+      color: #64748B; cursor: pointer; margin-bottom: 16px; transition: 0.15s; }
+    .back-btn:hover { border-color: var(--gold-light); }
 
-        .stylist-btn:hover { border-color: var(--gold-light); }
-        .stylist-btn.active {
-            border-color: var(--gold); background: #FBF8F3; color: var(--gold);
-        }
+    .continue-btn { width: 100%; padding: 14px; border: 2px solid var(--gold); border-radius: 12px;
+      font-size: 16px; font-weight: 800; cursor: pointer; background: var(--white);
+      color: var(--gold); margin-top: 10px; transition: 0.1s; }
+    .continue-btn:active { transform: scale(0.97); }
 
-        /* ====== 客人列表 ====== */
-        .customer-item {
-            padding: 14px; border: 2px solid var(--border);
-            border-radius: 12px; margin-bottom: 10px;
-            cursor: pointer; transition: all 0.15s;
-        }
+    /* 成功畫面 */
+    .success-wrap { text-align: center; padding: 24px 0 8px; }
+    .success-icon { font-size: 48px; margin-bottom: 12px; }
+    .success-title { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
+    .success-sub { font-size: 14px; color: #94A3B8; }
 
-        .customer-item:hover { border-color: var(--gold-light); }
-        .customer-item.active { border-color: var(--gold); background: #FBF8F3; }
-        .customer-item.done { border-color: #86EFAC; background: #F0FDF4; opacity: 0.7; pointer-events: none; }
+    /* 狀態 */
+    .empty-msg { text-align: center; padding: 32px 16px; color: #94A3B8; font-size: 14px; font-weight: 600; }
+    .loading { text-align: center; padding: 24px; color: #94A3B8; font-size: 14px; }
+    .count-badge { display: inline-block; background: #EF4444; color: #FFF; font-size: 11px;
+      font-weight: 800; padding: 1px 7px; border-radius: 10px; margin-left: 6px; vertical-align: middle; }
 
-        .customer-name {
-            font-size: 16px; font-weight: 800; color: var(--dark); margin-bottom: 4px;
-        }
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: #333; color: #FFF; padding: 12px 24px; border-radius: 12px;
+      font-size: 14px; font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 100; }
+    .toast.show { opacity: 1; }
 
-        .customer-meta {
-            font-size: 12px; color: #94A3B8; font-weight: 500;
-        }
-
-        .customer-done-badge {
-            display: inline-block; font-size: 11px; font-weight: 700;
-            color: #16A34A; background: #DCFCE7;
-            padding: 2px 8px; border-radius: 6px; margin-left: 8px;
-        }
-
-        /* ====== 表單 ====== */
-        .form-area { display: none; margin-top: 16px; }
-        .form-area.open { display: block; }
-
-        .input-group { margin-bottom: 16px; }
-
-        label.field-label {
-            display: block; font-weight: 700;
-            margin-bottom: 6px; font-size: 13px; color: #475569;
-        }
-
-        .req { color: #EF4444; }
-
-        input[type="text"], textarea {
-            width: 100%; padding: 12px;
-            border: 2px solid var(--border); border-radius: 10px;
-            font-size: 15px; font-weight: 600; background: #FFF;
-            outline: none; transition: border-color 0.2s;
-        }
-
-        input[type="text"]:focus, textarea:focus { border-color: var(--gold); }
-
-        textarea { resize: vertical; min-height: 60px; }
-
-        /* 單選按鈕組 */
-        .radio-group {
-            display: flex; flex-wrap: wrap; gap: 8px;
-        }
-
-        .radio-group label {
-            padding: 10px 14px; border: 2px solid var(--border);
-            border-radius: 10px; font-size: 14px; font-weight: 600;
-            color: #64748B; cursor: pointer; transition: all 0.15s;
-        }
-
-        .radio-group input { display: none; }
-        .radio-group input:checked + span {
-            /* handled by JS adding .selected class to parent label */
-        }
-        .radio-group label.selected {
-            border-color: var(--gold); background: #FBF8F3; color: var(--gold);
-        }
-
-        /* 複選按鈕組 */
-        .check-group {
-            display: flex; flex-wrap: wrap; gap: 8px;
-        }
-
-        .check-group label {
-            padding: 10px 14px; border: 2px solid var(--border);
-            border-radius: 10px; font-size: 14px; font-weight: 600;
-            color: #64748B; cursor: pointer; transition: all 0.15s;
-        }
-
-        .check-group input { display: none; }
-        .check-group label.selected {
-            border-color: var(--gold); background: #FBF8F3; color: var(--gold);
-        }
-
-        /* 送出按鈕 */
-        .submit-btn {
-            width: 100%; padding: 14px; border: none;
-            border-radius: 12px; font-size: 16px; font-weight: 800;
-            cursor: pointer; background: var(--gold); color: #FFF;
-            box-shadow: 0 4px 12px rgba(181, 158, 109, 0.3);
-            transition: transform 0.1s, opacity 0.2s;
-        }
-
-        .submit-btn:active { transform: scale(0.97); }
-        .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        /* 返回按鈕 */
-        .back-btn {
-            display: inline-block; padding: 8px 16px;
-            border: 2px solid var(--border); border-radius: 10px;
-            background: var(--white); font-size: 13px; font-weight: 700;
-            color: #64748B; cursor: pointer; margin-bottom: 16px;
-            transition: border-color 0.15s;
-        }
-
-        .back-btn:hover { border-color: var(--gold-light); }
-
-        /* 狀態訊息 */
-        .empty-msg {
-            text-align: center; padding: 32px 16px;
-            color: #94A3B8; font-size: 14px; font-weight: 600;
-        }
-
-        .loading {
-            text-align: center; padding: 24px;
-            color: #94A3B8; font-size: 14px;
-        }
-
-        .toast {
-            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-            background: #333; color: #FFF; padding: 12px 24px;
-            border-radius: 12px; font-size: 14px; font-weight: 700;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            opacity: 0; transition: opacity 0.3s; pointer-events: none;
-            z-index: 100;
-        }
-
-        .toast.show { opacity: 1; }
-
-        @media (max-width: 360px) {
-            .stylist-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-    </style>
+    @media (max-width: 360px) { .stylist-grid { grid-template-columns: repeat(2, 1fr); } }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="brand-logo">ELIZ</div>
-            <div class="brand-subtitle">業務回填系統</div>
-        </header>
+<div class="container">
+  <header>
+    <div class="brand-logo">ELIZ</div>
+    <div class="brand-subtitle">業務回填系統</div>
+  </header>
 
-        <!-- 畫面 1：選擇家配師 -->
-        <div id="screenStylist">
-            <div class="card">
-                <div class="section-title">請選擇您的名字</div>
-                <div id="stylistGrid">
-                    <div class="loading">載入中...</div>
-                </div>
-            </div>
-        </div>
+  <!-- 畫面 1：選擇家配師 -->
+  <div id="screenStylist">
+    <div class="card">
+      <div class="section-title">請選擇您的名字</div>
+      <div id="stylistGrid"><div class="loading">載入中...</div></div>
+    </div>
+  </div>
 
-        <!-- 畫面 2：客人列表 -->
-        <div id="screenCustomers" style="display:none">
-            <button class="back-btn" onclick="showScreen('stylist')">← 返回選擇</button>
-            <div class="card">
-                <div class="section-title">
-                    <span id="selectedStylistName"></span> — 待回填客戶
-                </div>
-                <div id="customerList">
-                    <div class="loading">載入中...</div>
-                </div>
-            </div>
-        </div>
+  <!-- 畫面 2：主頁（兩個 Tab） -->
+  <div id="screenHub" style="display:none">
+    <button class="back-btn" onclick="showScreen('stylist')">← 返回選擇</button>
 
-        <!-- 畫面 3：填寫表單 -->
-        <div id="screenForm" style="display:none">
-            <button class="back-btn" onclick="showScreen('customers')">← 返回客戶列表</button>
-            <div class="card">
-                <div class="section-title">
-                    回填：<span id="formCustomerName"></span>
-                </div>
-                <div class="customer-meta" id="formCustomerMeta" style="margin-bottom:16px;"></div>
-
-                <form id="crmForm">
-                    <!-- 1. 訂單編號 -->
-                    <div class="input-group">
-                        <label class="field-label">訂單編號 <span class="req">*</span></label>
-                        <input type="text" id="orderNumber" placeholder="請輸入訂單編號" required>
-                    </div>
-
-                    <!-- 2. 客戶類型 -->
-                    <div class="input-group">
-                        <label class="field-label">客戶類型 <span class="req">*</span></label>
-                        <div class="radio-group" data-field="clientType">
-                            <label onclick="selectRadio(this)"><input type="radio" name="clientType" value="門市客"><span>門市客</span></label>
-                            <label onclick="selectRadio(this)"><input type="radio" name="clientType" value="設計師"><span>設計師</span></label>
-                            <label onclick="selectRadio(this)"><input type="radio" name="clientType" value="建案公設"><span>建案公設</span></label>
-                        </div>
-                    </div>
-
-                    <!-- 3. 案件規模 -->
-                    <div class="input-group">
-                        <label class="field-label">案件規模 <span class="req">*</span></label>
-                        <div class="radio-group" data-field="projectScale">
-                            <label onclick="selectRadio(this)"><input type="radio" name="projectScale" value="單件"><span>單件</span></label>
-                            <label onclick="selectRadio(this)"><input type="radio" name="projectScale" value="單空間"><span>單空間</span></label>
-                            <label onclick="selectRadio(this)"><input type="radio" name="projectScale" value="整屋"><span>整屋</span></label>
-                        </div>
-                    </div>
-
-                    <!-- 4. 空間類型 -->
-                    <div class="input-group">
-                        <label class="field-label">空間類型 <span class="req">*</span></label>
-                        <div class="radio-group" data-field="spaceType">
-                            <label onclick="selectRadio(this)"><input type="radio" name="spaceType" value="住宅"><span>住宅</span></label>
-                            <label onclick="selectRadio(this)"><input type="radio" name="spaceType" value="商用"><span>商用</span></label>
-                            <label onclick="selectRadio(this)"><input type="radio" name="spaceType" value="公設"><span>公設</span></label>
-                        </div>
-                    </div>
-
-                    <!-- 5. 主要品項（複選） -->
-                    <div class="input-group">
-                        <label class="field-label">主要品項 <span class="req">*</span>（可複選）</label>
-                        <div class="check-group" data-field="mainItems">
-                            <label onclick="toggleCheck(this)"><input type="checkbox" name="mainItems" value="沙發"><span>沙發</span></label>
-                            <label onclick="toggleCheck(this)"><input type="checkbox" name="mainItems" value="茶几"><span>茶几</span></label>
-                            <label onclick="toggleCheck(this)"><input type="checkbox" name="mainItems" value="餐桌"><span>餐桌</span></label>
-                            <label onclick="toggleCheck(this)"><input type="checkbox" name="mainItems" value="餐椅"><span>餐椅</span></label>
-                            <label onclick="toggleCheck(this)"><input type="checkbox" name="mainItems" value="餐櫃"><span>餐櫃</span></label>
-                            <label onclick="toggleCheck(this)"><input type="checkbox" name="mainItems" value="床組"><span>床組</span></label>
-                            <label onclick="toggleCheck(this)"><input type="checkbox" name="mainItems" value="床頭櫃"><span>床頭櫃</span></label>
-                            <label onclick="toggleCheck(this)"><input type="checkbox" name="mainItems" value="收納櫃"><span>收納櫃</span></label>
-                            <label onclick="toggleCheck(this)"><input type="checkbox" name="mainItems" value="全室配置"><span>全室配置</span></label>
-                            <label onclick="toggleCheck(this)"><input type="checkbox" name="mainItems" value="其他"><span>其他</span></label>
-                        </div>
-                    </div>
-
-                    <!-- 6. 購買金額區間 -->
-                    <div class="input-group">
-                        <label class="field-label">購買金額區間 <span class="req">*</span></label>
-                        <div class="radio-group" data-field="priceRange">
-                            <label onclick="selectRadio(this)"><input type="radio" name="priceRange" value="10萬以下"><span>10萬以下</span></label>
-                            <label onclick="selectRadio(this)"><input type="radio" name="priceRange" value="10-30萬"><span>10-30萬</span></label>
-                            <label onclick="selectRadio(this)"><input type="radio" name="priceRange" value="30-60萬"><span>30-60萬</span></label>
-                            <label onclick="selectRadio(this)"><input type="radio" name="priceRange" value="60萬以上"><span>60萬以上</span></label>
-                        </div>
-                    </div>
-
-                    <!-- 7. 備註 -->
-                    <div class="input-group">
-                        <label class="field-label">備註</label>
-                        <textarea id="note" placeholder="選填"></textarea>
-                    </div>
-
-                    <button type="submit" class="submit-btn" id="submitBtn">送出</button>
-                </form>
-            </div>
-        </div>
-
-        <div class="toast" id="toast"></div>
+    <div class="tab-bar">
+      <div class="tab active" id="tabBtnClaim" onclick="switchHubTab('claim')">
+        待認領款項<span class="count-badge" id="claimCount" style="display:none">0</span>
+      </div>
+      <div class="tab" id="tabBtnWarranty" onclick="switchHubTab('warranty')">
+        保固回填<span class="count-badge" id="warrantyCount" style="display:none">0</span>
+      </div>
     </div>
 
-    <script>
-    // ============ CONFIG ============
-    // 部署 GAS 後，將網址填入這裡
-    const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbysXC8iOpXg9Y3_0qxZQmTz4xsCzsDWRUJufzUyjVVqCBobgTNAvA1Q5XYsILnrClha/exec';
-    // ================================
+    <!-- Tab 待認領 -->
+    <div id="tabClaim">
+      <div class="card">
+        <div class="section-title">待認領款項</div>
+        <div id="paymentList"><div class="loading">載入中...</div></div>
+      </div>
+    </div>
 
-    let currentStylist = '';
-    let currentCustomer = null;
-    let customersData = [];
+    <!-- Tab 保固回填 -->
+    <div id="tabWarranty" style="display:none">
+      <div class="card">
+        <div class="section-title"><span id="hubStylistName"></span> — 待回填客戶</div>
+        <div id="customerList"><div class="loading">載入中...</div></div>
+      </div>
+    </div>
+  </div>
 
-    // ====== 初始化 ======
-    document.addEventListener('DOMContentLoaded', function() {
-        loadStylists();
+  <!-- 畫面 3：認領表單 -->
+  <div id="screenClaim" style="display:none">
+    <button class="back-btn" onclick="showScreen('hub')">← 返回</button>
+    <div class="card">
+      <div class="section-title">認領款項</div>
+      <div style="background:#FFFBEB;border:2px solid #FCD34D;border-radius:10px;padding:12px 14px;margin-bottom:16px;">
+        <div style="font-size:20px;font-weight:900;" id="claimAmount"></div>
+        <div style="font-size:13px;color:#94A3B8;margin-top:3px;" id="claimMeta"></div>
+      </div>
 
-        document.getElementById('crmForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            submitForm();
+      <form id="claimForm">
+        <div class="input-group">
+          <label class="field-label">訂單編號 <span class="req">*</span></label>
+          <input type="text" id="claimOrderNumber" placeholder="請輸入訂單編號" required>
+        </div>
+        <div class="input-group">
+          <label class="field-label">客戶類型 <span class="req">*</span></label>
+          <div class="radio-group">
+            <label onclick="selectRadio(this)"><input type="radio" name="claimClientType" value="門市客"><span>門市客</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="claimClientType" value="設計師"><span>設計師</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="claimClientType" value="建案公設"><span>建案公設</span></label>
+          </div>
+        </div>
+        <div class="input-group">
+          <label class="field-label">案件規模 <span class="req">*</span></label>
+          <div class="radio-group">
+            <label onclick="selectRadio(this)"><input type="radio" name="claimProjectScale" value="單件"><span>單件</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="claimProjectScale" value="單空間"><span>單空間</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="claimProjectScale" value="整屋"><span>整屋</span></label>
+          </div>
+        </div>
+        <div class="input-group">
+          <label class="field-label">空間類型 <span class="req">*</span></label>
+          <div class="radio-group">
+            <label onclick="selectRadio(this)"><input type="radio" name="claimSpaceType" value="住宅"><span>住宅</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="claimSpaceType" value="商用"><span>商用</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="claimSpaceType" value="公設"><span>公設</span></label>
+          </div>
+        </div>
+        <div class="input-group">
+          <label class="field-label">主要品項 <span class="req">*</span>（可複選）</label>
+          <div class="check-group">
+            <label onclick="toggleCheck(this)"><input type="checkbox" name="claimMainItems" value="沙發"><span>沙發</span></label>
+            <label onclick="toggleCheck(this)"><input type="checkbox" name="claimMainItems" value="茶几"><span>茶几</span></label>
+            <label onclick="toggleCheck(this)"><input type="checkbox" name="claimMainItems" value="餐桌"><span>餐桌</span></label>
+            <label onclick="toggleCheck(this)"><input type="checkbox" name="claimMainItems" value="餐椅"><span>餐椅</span></label>
+            <label onclick="toggleCheck(this)"><input type="checkbox" name="claimMainItems" value="餐櫃"><span>餐櫃</span></label>
+            <label onclick="toggleCheck(this)"><input type="checkbox" name="claimMainItems" value="床組"><span>床組</span></label>
+            <label onclick="toggleCheck(this)"><input type="checkbox" name="claimMainItems" value="床頭櫃"><span>床頭櫃</span></label>
+            <label onclick="toggleCheck(this)"><input type="checkbox" name="claimMainItems" value="收納櫃"><span>收納櫃</span></label>
+            <label onclick="toggleCheck(this)"><input type="checkbox" name="claimMainItems" value="全室配置"><span>全室配置</span></label>
+            <label onclick="toggleCheck(this)"><input type="checkbox" name="claimMainItems" value="其他"><span>其他</span></label>
+          </div>
+        </div>
+        <div class="input-group">
+          <label class="field-label">購買金額區間 <span class="req">*</span></label>
+          <div class="radio-group">
+            <label onclick="selectRadio(this)"><input type="radio" name="claimPriceRange" value="10萬以下"><span>10萬以下</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="claimPriceRange" value="10-30萬"><span>10-30萬</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="claimPriceRange" value="30-60萬"><span>30-60萬</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="claimPriceRange" value="60萬以上"><span>60萬以上</span></label>
+          </div>
+        </div>
+        <div class="input-group">
+          <label class="field-label">備註</label>
+          <textarea id="claimNote" placeholder="選填"></textarea>
+        </div>
+        <button type="submit" class="submit-btn" id="claimSubmitBtn">送出認領</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 畫面 4：認領成功 -->
+  <div id="screenClaimSuccess" style="display:none">
+    <div class="card">
+      <div class="success-wrap">
+        <div class="success-icon">✅</div>
+        <div class="success-title">認領成功！</div>
+        <div class="success-sub" id="successMeta"></div>
+      </div>
+      <br>
+      <button class="continue-btn" onclick="continueClaimFlow()">繼續認領下一筆</button>
+      <button class="back-btn" style="width:100%;text-align:center;margin-top:8px;margin-bottom:0" onclick="showScreen('hub')">返回主頁</button>
+    </div>
+  </div>
+
+  <!-- 畫面 5：保固回填表單 -->
+  <div id="screenWarrantyForm" style="display:none">
+    <button class="back-btn" onclick="showScreen('hub')">← 返回</button>
+    <div class="card">
+      <div class="section-title">回填：<span id="formCustomerName"></span></div>
+      <div class="customer-meta" id="formCustomerMeta" style="margin-bottom:16px;"></div>
+
+      <form id="warrantyForm">
+        <div class="input-group">
+          <label class="field-label">訂單編號 <span class="req">*</span></label>
+          <input type="text" id="warrantyOrderNumber" placeholder="請輸入訂單編號" required>
+        </div>
+        <div class="input-group">
+          <label class="field-label">客戶類型 <span class="req">*</span></label>
+          <div class="radio-group">
+            <label onclick="selectRadio(this)"><input type="radio" name="wClientType" value="門市客"><span>門市客</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="wClientType" value="設計師"><span>設計師</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="wClientType" value="建案公設"><span>建案公設</span></label>
+          </div>
+        </div>
+        <div class="input-group">
+          <label class="field-label">案件規模 <span class="req">*</span></label>
+          <div class="radio-group">
+            <label onclick="selectRadio(this)"><input type="radio" name="wProjectScale" value="單件"><span>單件</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="wProjectScale" value="單空間"><span>單空間</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="wProjectScale" value="整屋"><span>整屋</span></label>
+          </div>
+        </div>
+        <div class="input-group">
+          <label class="field-label">空間類型 <span class="req">*</span></label>
+          <div class="radio-group">
+            <label onclick="selectRadio(this)"><input type="radio" name="wSpaceType" value="住宅"><span>住宅</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="wSpaceType" value="商用"><span>商用</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="wSpaceType" value="公設"><span>公設</span></label>
+          </div>
+        </div>
+        <div class="input-group">
+          <label class="field-label">主要品項 <span class="req">*</span>（可複選）</label>
+          <div class="check-group">
+            <label onclick="toggleCheck(this)"><input type="checkbox" name="wMainItems" value="沙發"><span>沙發</span></label>
+            <label onclick="toggleCheck(this)"><input type="checkbox" name="wMainItems" value="茶几"><span>茶几</span></label>
+            <label onclick="toggleCheck(this)"><input type="checkbox" name="wMainItems" value="餐桌"><span>餐桌</span></label>
+            <label onclick="toggleCheck(this)"><input type="checkbox" name="wMainItems" value="餐椅"><span>餐椅</span></label>
+            <label onclick="toggleCheck(this)"><input type="checkbox" name="wMainItems" value="餐櫃"><span>餐櫃</span></label>
+            <label onclick="toggleCheck(this)"><input type="checkbox" name="wMainItems" value="床組"><span>床組</span></label>
+            <label onclick="toggleCheck(this)"><input type="checkbox" name="wMainItems" value="床頭櫃"><span>床頭櫃</span></label>
+            <label onclick="toggleCheck(this)"><input type="checkbox" name="wMainItems" value="收納櫃"><span>收納櫃</span></label>
+            <label onclick="toggleCheck(this)"><input type="checkbox" name="wMainItems" value="全室配置"><span>全室配置</span></label>
+            <label onclick="toggleCheck(this)"><input type="checkbox" name="wMainItems" value="其他"><span>其他</span></label>
+          </div>
+        </div>
+        <div class="input-group">
+          <label class="field-label">購買金額區間 <span class="req">*</span></label>
+          <div class="radio-group">
+            <label onclick="selectRadio(this)"><input type="radio" name="wPriceRange" value="10萬以下"><span>10萬以下</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="wPriceRange" value="10-30萬"><span>10-30萬</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="wPriceRange" value="30-60萬"><span>30-60萬</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="wPriceRange" value="60萬以上"><span>60萬以上</span></label>
+          </div>
+        </div>
+        <div class="input-group">
+          <label class="field-label">備註</label>
+          <textarea id="warrantyNote" placeholder="選填"></textarea>
+        </div>
+        <button type="submit" class="submit-btn" id="warrantySubmitBtn">送出</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============ CONFIG ============
+const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbysXC8iOpXg9Y3_0qxZQmTz4xsCzsDWRUJufzUyjVVqCBobgTNAvA1Q5XYsILnrClha/exec';
+// ================================
+
+let currentStylist = '';
+let currentPayment = null;
+let currentCustomer = null;
+let pendingPayments = [];
+let warrantyCustomers = [];
+
+// ====== 初始化 ======
+document.addEventListener('DOMContentLoaded', function() {
+  loadStylists();
+
+  document.getElementById('claimForm').addEventListener('submit', function(e) {
+    e.preventDefault(); submitClaim();
+  });
+  document.getElementById('warrantyForm').addEventListener('submit', function(e) {
+    e.preventDefault(); submitWarranty();
+  });
+});
+
+// ====== 畫面切換 ======
+function showScreen(screen) {
+  var screens = ['screenStylist','screenHub','screenClaim','screenClaimSuccess','screenWarrantyForm'];
+  screens.forEach(function(s) {
+    document.getElementById(s).style.display = s === 'screen' + cap(screen) ? 'block' : 'none';
+  });
+  window.scrollTo(0, 0);
+}
+function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+// ====== Hub Tab 切換 ======
+function switchHubTab(tab) {
+  document.getElementById('tabClaim').style.display   = tab === 'claim'   ? 'block' : 'none';
+  document.getElementById('tabWarranty').style.display = tab === 'warranty' ? 'block' : 'none';
+  document.getElementById('tabBtnClaim').classList.toggle('active', tab === 'claim');
+  document.getElementById('tabBtnWarranty').classList.toggle('active', tab === 'warranty');
+}
+
+// ====== 載入家配師 ======
+function loadStylists() {
+  fetch(GAS_API_URL + '?action=getStylistList')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var grid = document.getElementById('stylistGrid');
+      grid.innerHTML = '';
+      var hasData = (data.taipei && data.taipei.length) || (data.taichung && data.taichung.length);
+      if (!hasData) { grid.innerHTML = '<div class="empty-msg">尚無家配師資料</div>'; return; }
+
+      function renderGroup(label, names) {
+        if (!names || !names.length) return;
+        var title = document.createElement('div');
+        title.className = 'store-label'; title.textContent = label;
+        grid.appendChild(title);
+        var row = document.createElement('div');
+        row.className = 'stylist-grid';
+        names.forEach(function(name) {
+          var btn = document.createElement('div');
+          btn.className = 'stylist-btn'; btn.textContent = name;
+          btn.onclick = function() { selectStylist(name, btn); };
+          row.appendChild(btn);
         });
+        grid.appendChild(row);
+      }
+      renderGroup('台北店', data.taipei);
+      renderGroup('台中店', data.taichung);
+    })
+    .catch(function() {
+      document.getElementById('stylistGrid').innerHTML = '<div class="empty-msg">載入失敗，請重新整理</div>';
     });
+}
 
-    // ====== 畫面切換 ======
-    function showScreen(screen) {
-        document.getElementById('screenStylist').style.display = screen === 'stylist' ? 'block' : 'none';
-        document.getElementById('screenCustomers').style.display = screen === 'customers' ? 'block' : 'none';
-        document.getElementById('screenForm').style.display = screen === 'form' ? 'block' : 'none';
-        window.scrollTo(0, 0);
+// ====== 選家配師 → 進 Hub ======
+function selectStylist(name, btn) {
+  document.querySelectorAll('.stylist-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  currentStylist = name;
+  document.getElementById('hubStylistName').textContent = name;
+  showScreen('hub');
+  switchHubTab('claim');
+  loadPendingPayments();
+  loadWarrantyCustomers();
+}
+
+// ====== 待認領款項 ======
+function loadPendingPayments() {
+  document.getElementById('paymentList').innerHTML = '<div class="loading">載入中...</div>';
+  fetch(GAS_API_URL + '?action=getPendingPayments')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      pendingPayments = data.payments || [];
+      renderPaymentList();
+      var badge = document.getElementById('claimCount');
+      if (pendingPayments.length > 0) {
+        badge.textContent = pendingPayments.length;
+        badge.style.display = 'inline-block';
+      } else {
+        badge.style.display = 'none';
+      }
+    })
+    .catch(function() {
+      document.getElementById('paymentList').innerHTML = '<div class="empty-msg">載入失敗，請重新整理</div>';
+    });
+}
+
+function renderPaymentList() {
+  var el = document.getElementById('paymentList');
+  if (pendingPayments.length === 0) {
+    el.innerHTML = '<div class="empty-msg">目前沒有待認領款項 🎉</div>';
+    return;
+  }
+  el.innerHTML = '';
+  pendingPayments.forEach(function(p) {
+    var div = document.createElement('div');
+    div.className = 'payment-item';
+    div.innerHTML =
+      '<div class="payment-amount">$' + Number(p.amount).toLocaleString() + '</div>' +
+      '<div class="payment-sub">' + p.paymentDate +
+        (p.last5digits ? '　末五碼：' + p.last5digits : '') +
+        (p.customerName ? '　' + p.customerName : '') +
+      '</div>' +
+      '<div class="payment-hint">點擊認領這筆款項</div>';
+    div.onclick = function() { openClaimForm(p); };
+    el.appendChild(div);
+  });
+}
+
+// ====== 開啟認領表單 ======
+function openClaimForm(payment) {
+  currentPayment = payment;
+  document.getElementById('claimAmount').textContent = '$' + Number(payment.amount).toLocaleString();
+  document.getElementById('claimMeta').textContent =
+    payment.paymentDate +
+    (payment.last5digits ? '　末五碼：' + payment.last5digits : '') +
+    (payment.customerName ? '　' + payment.customerName : '');
+
+  document.getElementById('claimForm').reset();
+  document.querySelectorAll('#claimForm .radio-group label, #claimForm .check-group label')
+    .forEach(function(l) { l.classList.remove('selected'); });
+
+  showScreen('claim');
+}
+
+// ====== 送出認領 ======
+function submitClaim() {
+  var orderNumber = document.getElementById('claimOrderNumber').value.trim();
+  if (!orderNumber) { showToast('請填寫訂單編號'); return; }
+  var clientType = getRadioValue('claimClientType');
+  if (!clientType) { showToast('請選擇客戶類型'); return; }
+  var projectScale = getRadioValue('claimProjectScale');
+  if (!projectScale) { showToast('請選擇案件規模'); return; }
+  var spaceType = getRadioValue('claimSpaceType');
+  if (!spaceType) { showToast('請選擇空間類型'); return; }
+  var mainItems = getCheckValues('claimMainItems');
+  if (!mainItems.length) { showToast('請選擇主要品項'); return; }
+  var priceRange = getRadioValue('claimPriceRange');
+  if (!priceRange) { showToast('請選擇購買金額區間'); return; }
+
+  var btn = document.getElementById('claimSubmitBtn');
+  btn.disabled = true; btn.textContent = '送出中...';
+
+  fetch(GAS_API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      action: 'claimPayment',
+      rowIndex: currentPayment.rowIndex,
+      stylist: currentStylist,
+      orderNumber: orderNumber,
+      clientType: clientType,
+      projectScale: projectScale,
+      spaceType: spaceType,
+      mainItems: mainItems.join('、'),
+      priceRange: priceRange,
+      note: document.getElementById('claimNote').value.trim()
+    })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(result) {
+    if (result.success) {
+      // 從 pending 列表移除
+      pendingPayments = pendingPayments.filter(function(p) {
+        return p.rowIndex !== currentPayment.rowIndex;
+      });
+      document.getElementById('successMeta').textContent =
+        '$' + Number(currentPayment.amount).toLocaleString() + '　訂單編號：' + orderNumber;
+      showScreen('claimSuccess');
+    } else {
+      showToast('送出失敗：' + (result.error || '未知錯誤'));
     }
+    btn.disabled = false; btn.textContent = '送出認領';
+  })
+  .catch(function() {
+    showToast('網路錯誤，請重試');
+    btn.disabled = false; btn.textContent = '送出認領';
+  });
+}
 
-    // ====== 載入家配師列表 ======
-    function loadStylists() {
-        fetch(GAS_API_URL + '?action=getStylistList')
-            .then(function(r) { return r.json(); })
-            .then(function(data) {
-                var grid = document.getElementById('stylistGrid');
-                grid.innerHTML = '';
+function continueClaimFlow() {
+  showScreen('hub');
+  switchHubTab('claim');
+  renderPaymentList();
+  var badge = document.getElementById('claimCount');
+  if (pendingPayments.length > 0) {
+    badge.textContent = pendingPayments.length;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+}
 
-                var hasData = (data.taipei && data.taipei.length > 0) ||
-                              (data.taichung && data.taichung.length > 0);
-                if (!hasData) {
-                    grid.innerHTML = '<div class="empty-msg">尚無家配師資料</div>';
-                    return;
-                }
+// ====== 保固回填（客戶列表） ======
+function loadWarrantyCustomers() {
+  document.getElementById('customerList').innerHTML = '<div class="loading">載入中...</div>';
+  fetch(GAS_API_URL + '?action=getCustomers&stylist=' + encodeURIComponent(currentStylist))
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      warrantyCustomers = data.customers || [];
+      renderCustomerList();
+      var badge = document.getElementById('warrantyCount');
+      if (warrantyCustomers.length > 0) {
+        badge.textContent = warrantyCustomers.length;
+        badge.style.display = 'inline-block';
+      } else {
+        badge.style.display = 'none';
+      }
+    })
+    .catch(function() {
+      document.getElementById('customerList').innerHTML = '<div class="empty-msg">載入失敗，請重新整理</div>';
+    });
+}
 
-                function renderGroup(label, names) {
-                    if (!names || names.length === 0) return;
-                    var title = document.createElement('div');
-                    title.className = 'store-label';
-                    title.textContent = label;
-                    grid.appendChild(title);
+function renderCustomerList() {
+  var list = document.getElementById('customerList');
+  list.innerHTML = '';
+  if (warrantyCustomers.length === 0) {
+    list.innerHTML = '<div class="empty-msg">目前沒有待回填的客戶 🎉</div>';
+    return;
+  }
+  warrantyCustomers.forEach(function(c) {
+    var div = document.createElement('div');
+    div.className = 'customer-item' + (c.done ? ' done' : '');
+    div.innerHTML =
+      '<div class="customer-name">' + c.customerName +
+        (c.done ? '<span class="customer-done-badge">已完成</span>' : '') +
+      '</div>' +
+      '<div class="customer-meta">' + c.phone + '　' + c.store + '　登記日：' + c.registDate + '</div>';
+    if (!c.done) div.onclick = function() { openWarrantyForm(c); };
+    list.appendChild(div);
+  });
+}
 
-                    var row = document.createElement('div');
-                    row.className = 'stylist-grid';
-                    names.forEach(function(name) {
-                        var btn = document.createElement('div');
-                        btn.className = 'stylist-btn';
-                        btn.textContent = name;
-                        btn.onclick = function() { selectStylist(name, btn); };
-                        row.appendChild(btn);
-                    });
-                    grid.appendChild(row);
-                }
+function openWarrantyForm(customer) {
+  currentCustomer = customer;
+  document.getElementById('formCustomerName').textContent = customer.customerName;
+  document.getElementById('formCustomerMeta').textContent =
+    customer.phone + '　' + customer.store + '　登記日：' + customer.registDate;
+  document.getElementById('warrantyForm').reset();
+  document.querySelectorAll('#warrantyForm .radio-group label, #warrantyForm .check-group label')
+    .forEach(function(l) { l.classList.remove('selected'); });
+  showScreen('warrantyForm');
+}
 
-                renderGroup('台北店', data.taipei);
-                renderGroup('台中店', data.taichung);
-            })
-            .catch(function(err) {
-                document.getElementById('stylistGrid').innerHTML =
-                    '<div class="empty-msg">載入失敗，請重新整理</div>';
-            });
-    }
+function submitWarranty() {
+  var orderNumber = document.getElementById('warrantyOrderNumber').value.trim();
+  if (!orderNumber) { showToast('請填寫訂單編號'); return; }
+  var clientType = getRadioValue('wClientType');
+  if (!clientType) { showToast('請選擇客戶類型'); return; }
+  var projectScale = getRadioValue('wProjectScale');
+  if (!projectScale) { showToast('請選擇案件規模'); return; }
+  var spaceType = getRadioValue('wSpaceType');
+  if (!spaceType) { showToast('請選擇空間類型'); return; }
+  var mainItems = getCheckValues('wMainItems');
+  if (!mainItems.length) { showToast('請選擇主要品項'); return; }
+  var priceRange = getRadioValue('wPriceRange');
+  if (!priceRange) { showToast('請選擇購買金額區間'); return; }
 
-    // ====== 選擇家配師 → 載入客人 ======
-    function selectStylist(name, btn) {
-        // 視覺
-        document.querySelectorAll('.stylist-btn').forEach(function(b) { b.classList.remove('active'); });
-        btn.classList.add('active');
-        currentStylist = name;
+  var btn = document.getElementById('warrantySubmitBtn');
+  btn.disabled = true; btn.textContent = '送出中...';
 
-        // 切換畫面
-        document.getElementById('selectedStylistName').textContent = name;
-        showScreen('customers');
-        loadCustomers(name);
-    }
-
-    // ====== 載入客人列表 ======
-    function loadCustomers(stylist) {
-        var list = document.getElementById('customerList');
-        list.innerHTML = '<div class="loading">載入中...</div>';
-
-        fetch(GAS_API_URL + '?action=getCustomers&stylist=' + encodeURIComponent(stylist))
-            .then(function(r) { return r.json(); })
-            .then(function(data) {
-                customersData = data.customers || [];
-                renderCustomerList();
-            })
-            .catch(function(err) {
-                list.innerHTML = '<div class="empty-msg">載入失敗，請重新整理</div>';
-            });
-    }
-
-    // ====== 渲染客人列表 ======
-    function renderCustomerList() {
-        var list = document.getElementById('customerList');
-        list.innerHTML = '';
-
-        if (customersData.length === 0) {
-            list.innerHTML = '<div class="empty-msg">目前沒有待回填的客戶</div>';
-            return;
+  fetch(GAS_API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      action: 'updateCustomer',
+      rowIndex: currentCustomer.rowIndex,
+      orderNumber: orderNumber,
+      clientType: clientType,
+      projectScale: projectScale,
+      spaceType: spaceType,
+      mainItems: mainItems.join('、'),
+      priceRange: priceRange,
+      note: document.getElementById('warrantyNote').value.trim()
+    })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(result) {
+    if (result.success) {
+      showToast('已送出！');
+      for (var i = 0; i < warrantyCustomers.length; i++) {
+        if (warrantyCustomers[i].rowIndex === currentCustomer.rowIndex) {
+          warrantyCustomers[i].done = true; break;
         }
-
-        customersData.forEach(function(c, i) {
-            var div = document.createElement('div');
-            div.className = 'customer-item' + (c.done ? ' done' : '');
-            div.innerHTML =
-                '<div class="customer-name">' + c.customerName +
-                (c.done ? '<span class="customer-done-badge">已完成</span>' : '') +
-                '</div>' +
-                '<div class="customer-meta">' + c.phone + '　' + c.store + '　登記日：' + c.registDate + '</div>';
-
-            if (!c.done) {
-                div.onclick = function() { openForm(c); };
-            }
-
-            list.appendChild(div);
-        });
+      }
+      setTimeout(function() { showScreen('hub'); switchHubTab('warranty'); renderCustomerList(); }, 800);
+    } else {
+      showToast('送出失敗：' + (result.error || '未知錯誤'));
     }
+    btn.disabled = false; btn.textContent = '送出';
+  })
+  .catch(function() {
+    showToast('網路錯誤，請重試');
+    btn.disabled = false; btn.textContent = '送出';
+  });
+}
 
-    // ====== 開啟表單 ======
-    function openForm(customer) {
-        currentCustomer = customer;
-
-        document.getElementById('formCustomerName').textContent = customer.customerName;
-        document.getElementById('formCustomerMeta').textContent =
-            customer.phone + '　' + customer.store + '　登記日：' + customer.registDate;
-
-        // 重置表單
-        document.getElementById('crmForm').reset();
-        document.querySelectorAll('.radio-group label, .check-group label').forEach(function(l) {
-            l.classList.remove('selected');
-        });
-
-        showScreen('form');
-    }
-
-    // ====== 單選按鈕 ======
-    function selectRadio(label) {
-        var group = label.parentElement;
-        group.querySelectorAll('label').forEach(function(l) { l.classList.remove('selected'); });
-        label.classList.add('selected');
-        label.querySelector('input').checked = true;
-    }
-
-    // ====== 複選按鈕 ======
-    function toggleCheck(label) {
-        var input = label.querySelector('input');
-        input.checked = !input.checked;
-        label.classList.toggle('selected', input.checked);
-    }
-
-    // ====== 送出表單 ======
-    function submitForm() {
-        // 驗證必填
-        var orderNumber = document.getElementById('orderNumber').value.trim();
-        if (!orderNumber) { showToast('請填寫訂單編號'); return; }
-
-        var clientType = getRadioValue('clientType');
-        if (!clientType) { showToast('請選擇客戶類型'); return; }
-
-        var projectScale = getRadioValue('projectScale');
-        if (!projectScale) { showToast('請選擇案件規模'); return; }
-
-        var spaceType = getRadioValue('spaceType');
-        if (!spaceType) { showToast('請選擇空間類型'); return; }
-
-        var mainItems = getCheckValues('mainItems');
-        if (mainItems.length === 0) { showToast('請選擇主要品項'); return; }
-
-        var priceRange = getRadioValue('priceRange');
-        if (!priceRange) { showToast('請選擇購買金額區間'); return; }
-
-        var btn = document.getElementById('submitBtn');
-        btn.disabled = true;
-        btn.textContent = '送出中...';
-
-        var payload = {
-            action: 'updateCustomer',
-            rowIndex: currentCustomer.rowIndex,
-            orderNumber: orderNumber,
-            clientType: clientType,
-            projectScale: projectScale,
-            spaceType: spaceType,
-            mainItems: mainItems.join('、'),
-            priceRange: priceRange,
-            note: document.getElementById('note').value.trim()
-        };
-
-        fetch(GAS_API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        })
-        .then(function(r) { return r.json(); })
-        .then(function(result) {
-            if (result.success) {
-                showToast('已送出！');
-                // 標記為已完成
-                for (var i = 0; i < customersData.length; i++) {
-                    if (customersData[i].rowIndex === currentCustomer.rowIndex) {
-                        customersData[i].done = true;
-                        break;
-                    }
-                }
-                // 回到客人列表
-                setTimeout(function() {
-                    showScreen('customers');
-                    renderCustomerList();
-                }, 800);
-            } else {
-                showToast('送出失敗：' + (result.error || '未知錯誤'));
-            }
-            btn.disabled = false;
-            btn.textContent = '送出';
-        })
-        .catch(function(err) {
-            showToast('網路錯誤，請重試');
-            btn.disabled = false;
-            btn.textContent = '送出';
-        });
-    }
-
-    // ====== 工具函式 ======
-    function getRadioValue(name) {
-        var el = document.querySelector('input[name="' + name + '"]:checked');
-        return el ? el.value : '';
-    }
-
-    function getCheckValues(name) {
-        var checked = document.querySelectorAll('input[name="' + name + '"]:checked');
-        return Array.from(checked).map(function(el) { return el.value; });
-    }
-
-    function showToast(msg) {
-        var toast = document.getElementById('toast');
-        toast.textContent = msg;
-        toast.classList.add('show');
-        setTimeout(function() { toast.classList.remove('show'); }, 2500);
-    }
-    </script>
+// ====== 工具函式 ======
+function getRadioValue(name) {
+  var el = document.querySelector('input[name="' + name + '"]:checked');
+  return el ? el.value : '';
+}
+function getCheckValues(name) {
+  return Array.from(document.querySelectorAll('input[name="' + name + '"]:checked'))
+    .map(function(el) { return el.value; });
+}
+function selectRadio(label) {
+  var group = label.parentElement;
+  group.querySelectorAll('label').forEach(function(l) { l.classList.remove('selected'); });
+  label.classList.add('selected');
+  label.querySelector('input').checked = true;
+}
+function toggleCheck(label) {
+  var input = label.querySelector('input');
+  input.checked = !input.checked;
+  label.classList.toggle('selected', input.checked);
+}
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2500);
+}
+</script>
 </body>
 </html>
