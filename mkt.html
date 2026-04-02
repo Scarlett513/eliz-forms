@@ -161,12 +161,6 @@
       </div>
     </div>
 
-    <!-- 進店來源 -->
-    <div class="card" id="sourceCard" style="display:none">
-      <div class="section-title">進店來源分布</div>
-      <div id="sourceList"></div>
-    </div>
-
     <!-- 款項列表 -->
     <div class="card">
       <div class="controls-row">
@@ -254,7 +248,6 @@ function loadDashboard() {
     .then(data => {
       allPayments = data.payments || [];
       renderStats(data);
-      renderSourceStats(data.sourceStats || {});
       renderList();
     })
     .catch(() => {
@@ -276,33 +269,6 @@ function statItem(num, label, cls) {
     '</div><div class="stat-label">' + label + '</div></div>';
 }
 
-// ====== 進店來源分布 ======
-function renderSourceStats(stats) {
-  const card = document.getElementById('sourceCard');
-  const el = document.getElementById('sourceList');
-  const entries = Object.entries(stats).sort((a, b) => b[1] - a[1]);
-  if (entries.length === 0) { card.style.display = 'none'; return; }
-
-  const total = entries.reduce((s, [, n]) => s + n, 0);
-
-  let html = '';
-  entries.forEach(function([src, cnt]) {
-    const pct = Math.round(cnt / total * 100);
-    html += '<div style="margin-bottom:10px;">' +
-      '<div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:4px;">' +
-        '<span>' + src + '</span>' +
-        '<span style="color:#475569;">' + cnt + ' 筆（' + pct + '%）</span>' +
-      '</div>' +
-      '<div style="height:8px;background:#F1F5F9;border-radius:4px;overflow:hidden;">' +
-        '<div style="height:100%;width:' + pct + '%;background:var(--gold);border-radius:4px;"></div>' +
-      '</div></div>';
-  });
-
-  html += '<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);font-size:12px;color:#64748B;">合計 ' + total + ' 筆</div>';
-
-  el.innerHTML = html;
-  card.style.display = 'block';
-}
 
 // ====== 篩選 ======
 function setFilter(f) {
