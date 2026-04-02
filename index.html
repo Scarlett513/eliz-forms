@@ -230,6 +230,19 @@
           </div>
         </div>
         <div class="input-group">
+          <label class="field-label">進店來源 <span class="req">*</span></label>
+          <div class="radio-group">
+            <label onclick="selectRadio(this)"><input type="radio" name="claimVisitSource" value="FB廣告"><span>FB廣告</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="claimVisitSource" value="IG廣告"><span>IG廣告</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="claimVisitSource" value="朋友介紹"><span>朋友介紹</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="claimVisitSource" value="Google搜尋"><span>Google搜尋</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="claimVisitSource" value="LINE搜尋"><span>LINE搜尋</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="claimVisitSource" value="路過門市"><span>路過門市</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="claimVisitSource" value="舊客回訪"><span>舊客回訪</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="claimVisitSource" value="其他"><span>其他</span></label>
+          </div>
+        </div>
+        <div class="input-group">
           <label class="field-label">備註</label>
           <textarea id="claimNote" placeholder="選填"></textarea>
         </div>
@@ -310,6 +323,19 @@
             <label onclick="selectRadio(this)"><input type="radio" name="wPriceRange" value="10-30萬"><span>10-30萬</span></label>
             <label onclick="selectRadio(this)"><input type="radio" name="wPriceRange" value="30-60萬"><span>30-60萬</span></label>
             <label onclick="selectRadio(this)"><input type="radio" name="wPriceRange" value="60萬以上"><span>60萬以上</span></label>
+          </div>
+        </div>
+        <div class="input-group">
+          <label class="field-label">進店來源 <span class="req">*</span></label>
+          <div class="radio-group">
+            <label onclick="selectRadio(this)"><input type="radio" name="wVisitSource" value="FB廣告"><span>FB廣告</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="wVisitSource" value="IG廣告"><span>IG廣告</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="wVisitSource" value="朋友介紹"><span>朋友介紹</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="wVisitSource" value="Google搜尋"><span>Google搜尋</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="wVisitSource" value="LINE搜尋"><span>LINE搜尋</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="wVisitSource" value="路過門市"><span>路過門市</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="wVisitSource" value="舊客回訪"><span>舊客回訪</span></label>
+            <label onclick="selectRadio(this)"><input type="radio" name="wVisitSource" value="其他"><span>其他</span></label>
           </div>
         </div>
         <div class="input-group">
@@ -483,6 +509,8 @@ function submitClaim() {
   if (!mainItems.length) { showToast('請選擇主要品項'); return; }
   var priceRange = getRadioValue('claimPriceRange');
   if (!priceRange) { showToast('請選擇購買金額區間'); return; }
+  var visitSource = getRadioValue('claimVisitSource');
+  if (!visitSource) { showToast('請選擇進店來源'); return; }
 
   var btn = document.getElementById('claimSubmitBtn');
   btn.disabled = true; btn.textContent = '送出中...';
@@ -500,6 +528,7 @@ function submitClaim() {
       spaceType: spaceType,
       mainItems: mainItems.join('、'),
       priceRange: priceRange,
+      visitSource: visitSource,
       note: document.getElementById('claimNote').value.trim()
     })
   })
@@ -602,6 +631,8 @@ function submitWarranty() {
   if (!mainItems.length) { showToast('請選擇主要品項'); return; }
   var priceRange = getRadioValue('wPriceRange');
   if (!priceRange) { showToast('請選擇購買金額區間'); return; }
+  var visitSource = getRadioValue('wVisitSource');
+  if (!visitSource) { showToast('請選擇進店來源'); return; }
 
   var btn = document.getElementById('warrantySubmitBtn');
   btn.disabled = true; btn.textContent = '送出中...';
@@ -618,6 +649,7 @@ function submitWarranty() {
       spaceType: spaceType,
       mainItems: mainItems.join('、'),
       priceRange: priceRange,
+      visitSource: visitSource,
       note: document.getElementById('warrantyNote').value.trim()
     })
   })
