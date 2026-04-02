@@ -284,27 +284,21 @@ function renderSourceStats(stats) {
   if (entries.length === 0) { card.style.display = 'none'; return; }
 
   const total = entries.reduce((s, [, n]) => s + n, 0);
-  const adSources = ['FB廣告', 'IG廣告'];
-  const adTotal = entries.filter(([k]) => adSources.includes(k)).reduce((s, [, n]) => s + n, 0);
 
   let html = '';
   entries.forEach(function([src, cnt]) {
     const pct = Math.round(cnt / total * 100);
-    const isAd = adSources.includes(src);
     html += '<div style="margin-bottom:10px;">' +
       '<div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:4px;">' +
-        '<span>' + (isAd ? '📢 ' : '') + src + '</span>' +
+        '<span>' + src + '</span>' +
         '<span style="color:#475569;">' + cnt + ' 筆（' + pct + '%）</span>' +
       '</div>' +
       '<div style="height:8px;background:#F1F5F9;border-radius:4px;overflow:hidden;">' +
-        '<div style="height:100%;width:' + pct + '%;background:' + (isAd ? 'var(--gold)' : '#93C5FD') + ';border-radius:4px;"></div>' +
+        '<div style="height:100%;width:' + pct + '%;background:var(--gold);border-radius:4px;"></div>' +
       '</div></div>';
   });
 
-  html += '<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);font-size:12px;color:#64748B;">' +
-    '📢 廣告引流共 <b style="color:var(--gold);">' + adTotal + ' 筆</b>（占 ' + Math.round(adTotal/total*100) + '%）' +
-    '　非廣告 ' + (total - adTotal) + ' 筆' +
-  '</div>';
+  html += '<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);font-size:12px;color:#64748B;">合計 ' + total + ' 筆</div>';
 
   el.innerHTML = html;
   card.style.display = 'block';
