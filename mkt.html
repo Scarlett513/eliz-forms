@@ -42,14 +42,16 @@
     .stat-item { text-align: center; padding: 14px 8px; border-radius: 12px; border: 2px solid var(--border); }
     .stat-num { font-size: 26px; font-weight: 900; color: var(--dark); }
     .stat-label { font-size: 11px; font-weight: 700; color: #94A3B8; margin-top: 2px; }
-    .stat-item.warn { border-color: #FCD34D; background: #FFFBEB; }
-    .stat-item.warn .stat-num { color: #D97706; }
-    .stat-item.ok { border-color: #86EFAC; background: #F0FDF4; }
-    .stat-item.ok .stat-num { color: #16A34A; }
-    .stat-item.blue { border-color: #93C5FD; background: #EFF6FF; }
-    .stat-item.blue .stat-num { color: #2563EB; }
-    .stat-item.red { border-color: #FCA5A5; background: #FEF2F2; }
-    .stat-item.red .stat-num { color: #DC2626; }
+    .stat-item.warn   { border-color: #FCD34D; background: #FFFBEB; }
+    .stat-item.warn   .stat-num { color: #D97706; }
+    .stat-item.ok     { border-color: #86EFAC; background: #F0FDF4; }
+    .stat-item.ok     .stat-num { color: #16A34A; }
+    .stat-item.blue   { border-color: #93C5FD; background: #EFF6FF; }
+    .stat-item.blue   .stat-num { color: #2563EB; }
+    .stat-item.red    { border-color: #FCA5A5; background: #FEF2F2; }
+    .stat-item.red    .stat-num { color: #DC2626; }
+    .stat-item.orange { border-color: #FDA4AF; background: #FFF1F2; }
+    .stat-item.orange .stat-num { color: #E11D48; }
 
     /* Controls */
     .controls-row { display: flex; gap: 8px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
@@ -68,26 +70,39 @@
       background: var(--white); font-size: 12px; font-weight: 700; color: #94A3B8;
       cursor: pointer; transition: 0.15s; }
     .filter-btn.active { border-color: var(--gold); background: #FBF8F3; color: var(--gold); }
+    .filter-btn.correction-filter.active { border-color: #E11D48; background: #FFF1F2; color: #E11D48; }
+
+    .search-input { width: 100%; padding: 10px 12px; border: 2px solid var(--border); border-radius: 10px;
+      font-size: 14px; font-weight: 600; background: #FFF; outline: none; margin-bottom: 12px;
+      transition: border-color 0.2s; -webkit-appearance: none; }
+    .search-input:focus { border-color: var(--gold); }
 
     /* Payment rows */
     .payment-row { padding: 12px 14px; border: 2px solid var(--border); border-radius: 12px;
       margin-bottom: 8px; }
-    .payment-row.pending   { border-color: #FCD34D; background: #FFFBEB; }
-    .payment-row.claimed   { border-color: #86EFAC; background: #F0FDF4; }
-    .payment-row.confirmed { border-color: #93C5FD; background: #EFF6FF; }
+    .payment-row.pending    { border-color: #FCD34D; background: #FFFBEB; }
+    .payment-row.claimed    { border-color: #86EFAC; background: #F0FDF4; }
+    .payment-row.confirmed  { border-color: #93C5FD; background: #EFF6FF; }
+    .payment-row.correction { border-color: #FDA4AF; background: #FFF1F2; }
     .payment-row.crm-missing { border-left: 4px solid #EF4444; }
 
     .row-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
     .row-amount { font-size: 17px; font-weight: 900; }
     .row-date   { font-size: 12px; color: #94A3B8; margin-top: 2px; }
-    .row-mid { margin-top: 6px; font-size: 13px; color: #475569; }
-    .row-crm { margin-top: 4px; font-size: 12px; color: #94A3B8; }
+    .row-created { font-size: 11px; color: #CBD5E1; margin-top: 1px; }
+    .row-mid  { margin-top: 6px; font-size: 13px; color: #475569; }
+    .row-crm  { margin-top: 4px; font-size: 12px; color: #94A3B8; }
+    .row-correction { margin-top: 8px; padding: 8px 10px; background: rgba(225,29,72,0.05);
+      border: 1px solid #FDA4AF; border-radius: 8px; font-size: 12px; }
+    .correction-info { color: #475569; margin-bottom: 6px; }
+    .correction-reason { color: #94A3B8; font-style: italic; }
 
     .status-badge { font-size: 11px; font-weight: 700; padding: 3px 9px;
       border-radius: 6px; white-space: nowrap; flex-shrink: 0; }
-    .badge-pending  { background: #FEF3C7; color: #D97706; }
-    .badge-claimed  { background: #DCFCE7; color: #16A34A; }
-    .badge-confirmed { background: #DBEAFE; color: #2563EB; }
+    .badge-pending    { background: #FEF3C7; color: #D97706; }
+    .badge-claimed    { background: #DCFCE7; color: #16A34A; }
+    .badge-confirmed  { background: #DBEAFE; color: #2563EB; }
+    .badge-correction { background: #FFE4E6; color: #E11D48; }
     .badge-crm { background: #FEE2E2; color: #DC2626; font-size: 10px; margin-left: 4px; }
 
     .confirm-btn { padding: 6px 12px; border: 2px solid var(--gold); border-radius: 8px;
@@ -95,6 +110,16 @@
       cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: 0.15s; }
     .confirm-btn:hover { background: #FBF8F3; }
     .confirm-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .approve-btn { padding: 6px 12px; border: 2px solid #16A34A; border-radius: 8px;
+      background: var(--white); color: #16A34A; font-size: 12px; font-weight: 700;
+      cursor: pointer; white-space: nowrap; transition: 0.15s; }
+    .approve-btn:hover { background: #F0FDF4; }
+    .reject-btn { padding: 6px 12px; border: 2px solid #E11D48; border-radius: 8px;
+      background: var(--white); color: #E11D48; font-size: 12px; font-weight: 700;
+      cursor: pointer; white-space: nowrap; transition: 0.15s; }
+    .reject-btn:hover { background: #FFF1F2; }
+    .action-btns { display: flex; gap: 6px; margin-top: 8px; }
 
     /* CSV 匯出 */
     .csv-area { background: #F8FAFC; border: 1px solid var(--border); border-radius: 10px;
@@ -158,6 +183,7 @@
         <div class="stat-item ok"><div class="stat-num">—</div><div class="stat-label">已認領</div></div>
         <div class="stat-item blue"><div class="stat-num">—</div><div class="stat-label">MKT已確認</div></div>
         <div class="stat-item red"><div class="stat-num">—</div><div class="stat-label">CRM未齊</div></div>
+        <div class="stat-item orange"><div class="stat-num">—</div><div class="stat-label">待更正審核</div></div>
       </div>
     </div>
 
@@ -165,12 +191,15 @@
     <div class="card">
       <div class="controls-row">
         <div class="filter-group">
-          <div class="filter-btn active" id="fAll"       onclick="setFilter('all')">全部</div>
-          <div class="filter-btn"        id="fPending"   onclick="setFilter('pending')">待認領</div>
-          <div class="filter-btn"        id="fClaimed"   onclick="setFilter('claimed')">待確認</div>
-          <div class="filter-btn"        id="fConfirmed" onclick="setFilter('confirmed')">已確認</div>
+          <div class="filter-btn active" id="fAll"        onclick="setFilter('all')">全部</div>
+          <div class="filter-btn"        id="fPending"    onclick="setFilter('pending')">待認領</div>
+          <div class="filter-btn"        id="fClaimed"    onclick="setFilter('claimed')">待確認</div>
+          <div class="filter-btn"        id="fConfirmed"  onclick="setFilter('confirmed')">已確認</div>
+          <div class="filter-btn correction-filter" id="fCorrection" onclick="setFilter('correction')">待更正</div>
         </div>
       </div>
+      <input type="search" class="search-input" id="searchInput"
+        placeholder="搜尋金額、末五碼、客戶姓名、家配師..." oninput="renderList()">
       <div id="paymentList"><div class="loading">載入中...</div></div>
     </div>
 
@@ -180,6 +209,7 @@
       <div class="controls-row">
         <span style="font-size:13px;font-weight:700;color:#475569;">月份：<span id="exportMonthLabel"></span></span>
         <button class="icon-btn primary" onclick="copyCSV()">複製 CSV</button>
+        <button class="icon-btn" onclick="downloadCSV()">⬇ 下載</button>
       </div>
       <div class="csv-area" id="csvArea">載入中...</div>
     </div>
@@ -191,8 +221,7 @@
 <script>
 // ============ CONFIG ============
 const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbysXC8iOpXg9Y3_0qxZQmTz4xsCzsDWRUJufzUyjVVqCBobgTNAvA1Q5XYsILnrClha/exec';
-// 修改以下密碼後部署
-const MKT_PIN = '0000';
+const MKT_PIN = '0713';
 // ================================
 
 let allPayments = [];
@@ -230,7 +259,6 @@ function initMonthSelect() {
     if (i === 0) opt.selected = true;
     sel.appendChild(opt);
   }
-  // 全部選項
   const allOpt = document.createElement('option');
   allOpt.value = ''; allOpt.textContent = '全部期間';
   sel.appendChild(allOpt);
@@ -240,7 +268,6 @@ function initMonthSelect() {
 function loadDashboard() {
   const month = document.getElementById('monthSelect').value;
   const url = GAS_API_URL + '?action=getMKTDashboard' + (month ? '&month=' + month : '');
-
   document.getElementById('paymentList').innerHTML = '<div class="loading">載入中...</div>';
 
   fetch(url)
@@ -258,23 +285,24 @@ function loadDashboard() {
 // ====== 統計 ======
 function renderStats(data) {
   document.getElementById('statsGrid').innerHTML =
-    statItem(data.total,        '總筆數',    '') +
-    statItem(data.pending,      '待認領',    'warn') +
-    statItem(data.claimed,      '已認領',    'ok') +
-    statItem(data.mktConfirmed, 'MKT已確認', 'blue') +
-    statItem(data.crmIncomplete,'CRM未齊',   'red');
+    statItem(data.total,             '總筆數',     '') +
+    statItem(data.pending,           '待認領',     'warn') +
+    statItem(data.claimed,           '已認領',     'ok') +
+    statItem(data.mktConfirmed,      'MKT已確認',  'blue') +
+    statItem(data.crmIncomplete,     'CRM未齊',    'red') +
+    statItem(data.pendingCorrection, '待更正審核', 'orange');
 }
 function statItem(num, label, cls) {
   return '<div class="stat-item ' + cls + '"><div class="stat-num">' + (num || 0) +
     '</div><div class="stat-label">' + label + '</div></div>';
 }
 
-
 // ====== 篩選 ======
 function setFilter(f) {
   currentFilter = f;
-  ['All','Pending','Claimed','Confirmed'].forEach(x => {
-    document.getElementById('f' + x).classList.toggle('active', f === x.toLowerCase());
+  ['All','Pending','Claimed','Confirmed','Correction'].forEach(x => {
+    const el = document.getElementById('f' + x);
+    if (el) el.classList.toggle('active', f === x.toLowerCase());
   });
   renderList();
 }
@@ -282,11 +310,22 @@ function setFilter(f) {
 // ====== 款項列表 ======
 function renderList() {
   const el = document.getElementById('paymentList');
+  const q  = (document.getElementById('searchInput').value || '').trim().toLowerCase();
   let filtered = allPayments;
 
-  if (currentFilter === 'pending')   filtered = allPayments.filter(p => p.status === '待認領');
-  if (currentFilter === 'claimed')   filtered = allPayments.filter(p => p.status === '已認領');
-  if (currentFilter === 'confirmed') filtered = allPayments.filter(p => p.status === 'MKT已確認');
+  if (currentFilter === 'pending')    filtered = allPayments.filter(p => p.status === '待認領');
+  if (currentFilter === 'claimed')    filtered = allPayments.filter(p => p.status === '已認領');
+  if (currentFilter === 'confirmed')  filtered = allPayments.filter(p => p.status === 'MKT已確認');
+  if (currentFilter === 'correction') filtered = allPayments.filter(p => p.status === '待MKT更正確認');
+
+  if (q) {
+    filtered = filtered.filter(p =>
+      String(p.amount).includes(q) ||
+      (p.last5digits && p.last5digits.toLowerCase().includes(q)) ||
+      (p.customerName && p.customerName.toLowerCase().includes(q)) ||
+      (p.stylist && p.stylist.toLowerCase().includes(q))
+    );
+  }
 
   if (filtered.length === 0) {
     el.innerHTML = '<div class="empty-msg">目前沒有符合的記錄</div>';
@@ -295,12 +334,18 @@ function renderList() {
 
   el.innerHTML = '';
   filtered.forEach(function(p) {
-    const crmMissing = p.status !== '待認領' && (!p.clientType || !p.projectScale || !p.spaceType || !p.mainItems || !p.priceRange);
+    const isCorrection = p.status === '待MKT更正確認';
+    const crmMissing = p.status !== '待認領' && !isCorrection &&
+      (!p.clientType || !p.projectScale || !p.spaceType || !p.mainItems || !p.priceRange);
     const rowClass = p.status === '待認領' ? 'pending'
+      : isCorrection ? 'correction'
       : p.mktConfirmed ? 'confirmed' : 'claimed';
     const badgeClass = p.status === '待認領' ? 'badge-pending'
+      : isCorrection ? 'badge-correction'
       : p.mktConfirmed ? 'badge-confirmed' : 'badge-claimed';
-    const badgeText = p.mktConfirmed ? 'MKT已確認' : p.status;
+    const badgeText = p.status === '待認領' ? '待認領'
+      : isCorrection ? '更正審核中'
+      : p.mktConfirmed ? 'MKT已確認' : '已認領';
 
     const div = document.createElement('div');
     div.className = 'payment-row ' + rowClass + (crmMissing ? ' crm-missing' : '');
@@ -310,10 +355,11 @@ function renderList() {
           '<div class="row-amount">$' + Number(p.amount).toLocaleString() +
             (crmMissing ? '<span class="status-badge badge-crm">CRM未齊</span>' : '') +
           '</div>' +
-          '<div class="row-date">' + p.paymentDate +
+          '<div class="row-date">匯款：' + p.paymentDate +
             (p.last5digits ? '　末五碼：' + p.last5digits : '') +
             (p.customerName ? '　' + p.customerName : '') +
           '</div>' +
+          '<div class="row-created">新增：' + (p.createdAt || '—') + '</div>' +
         '</div>' +
         '<div style="display:flex;gap:6px;align-items:center;flex-shrink:0;">' +
           '<span class="status-badge ' + badgeClass + '">' + badgeText + '</span>' +
@@ -325,9 +371,24 @@ function renderList() {
       (p.stylist
         ? '<div class="row-mid"><b>' + p.stylist + '</b>　訂編：' + (p.orderNumber || '—') + '</div>'
         : '') +
-      (p.status !== '待認領' && p.clientType
+      (p.status !== '待認領' && !isCorrection && p.clientType
         ? '<div class="row-crm">' + [p.clientType, p.projectScale, p.spaceType, p.mainItems, p.priceRange].filter(Boolean).join('　') + '</div>'
+        : '') +
+      // 更正申請資訊 + 批准/駁回按鈕
+      (isCorrection
+        ? '<div class="row-correction">' +
+            '<div class="correction-info">' +
+              '<b>' + (p.correctionRequester || p.stylist) + '</b> 申請更正' +
+              (p.correctionNewStylist ? ' → <b>' + p.correctionNewStylist + '</b>' : '') +
+            '</div>' +
+            (p.correctionReason ? '<div class="correction-reason">原因：' + p.correctionReason + '</div>' : '') +
+            '<div class="action-btns">' +
+              '<button class="approve-btn" onclick="approveCorrection(' + p.rowIndex + ', \'' + (p.correctionNewStylist || '').replace(/'/g, "\\'") + '\', this)">批准更正</button>' +
+              '<button class="reject-btn"  onclick="rejectCorrection(' + p.rowIndex + ', this)">駁回</button>' +
+            '</div>' +
+          '</div>'
         : '');
+
     el.appendChild(div);
   });
 }
@@ -344,7 +405,6 @@ function confirmPayment(rowIndex, btn) {
   .then(result => {
     if (result.success) {
       showToast('✅ 已確認');
-      // 更新本地資料
       allPayments = allPayments.map(p => {
         if (p.rowIndex === rowIndex) return Object.assign({}, p, { status: 'MKT已確認', mktConfirmed: true });
         return p;
@@ -357,6 +417,48 @@ function confirmPayment(rowIndex, btn) {
     }
   })
   .catch(() => { showToast('網路錯誤'); btn.disabled = false; btn.textContent = '確認'; });
+}
+
+// ====== 更正批准 ======
+function approveCorrection(rowIndex, newStylist, btn) {
+  btn.disabled = true; btn.textContent = '處理中...';
+  fetch(GAS_API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({ action: 'approveCorrection', rowIndex: rowIndex, newStylist: newStylist })
+  })
+  .then(r => r.json())
+  .then(result => {
+    if (result.success) {
+      showToast('✅ 已批准更正，認領人已更新');
+      loadDashboard();
+    } else {
+      showToast('失敗：' + (result.error || '未知錯誤'));
+      btn.disabled = false; btn.textContent = '批准更正';
+    }
+  })
+  .catch(() => { showToast('網路錯誤'); btn.disabled = false; btn.textContent = '批准更正'; });
+}
+
+// ====== 更正駁回 ======
+function rejectCorrection(rowIndex, btn) {
+  btn.disabled = true; btn.textContent = '處理中...';
+  fetch(GAS_API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({ action: 'rejectCorrection', rowIndex: rowIndex })
+  })
+  .then(r => r.json())
+  .then(result => {
+    if (result.success) {
+      showToast('已駁回更正申請');
+      loadDashboard();
+    } else {
+      showToast('失敗：' + (result.error || '未知錯誤'));
+      btn.disabled = false; btn.textContent = '駁回';
+    }
+  })
+  .catch(() => { showToast('網路錯誤'); btn.disabled = false; btn.textContent = '駁回'; });
 }
 
 // ====== 匯出 ======
@@ -374,11 +476,11 @@ function showExport() {
   fetch(url)
     .then(r => r.json())
     .then(data => {
-      const rows = [['匯款日期','金額','末五碼','客戶姓名','家配師','訂單編號','狀態','客戶類型','案件規模','空間類型','主要品項','購買金額區間']];
+      const rows = [['新增日期','匯款日期','金額','末五碼','客戶姓名','家配師','訂單編號','狀態','客戶類型','案件規模','空間類型','主要品項','購買金額區間']];
       (data.payments || []).forEach(p => {
-        rows.push([p.paymentDate, p.amount, p.last5digits||'', p.customerName||'', p.stylist||'',
-          p.orderNumber||'', p.status, p.clientType||'', p.projectScale||'', p.spaceType||'',
-          p.mainItems||'', p.priceRange||'']);
+        rows.push([p.createdAt||'', p.paymentDate, p.amount, p.last5digits||'', p.customerName||'',
+          p.stylist||'', p.orderNumber||'', p.status, p.clientType||'', p.projectScale||'',
+          p.spaceType||'', p.mainItems||'', p.priceRange||'']);
       });
       document.getElementById('csvArea').textContent = rows.map(r => r.join('\t')).join('\n');
     })
@@ -390,6 +492,19 @@ function copyCSV() {
   navigator.clipboard.writeText(text)
     .then(() => showToast('✅ 已複製到剪貼簿，可貼到 Excel'))
     .catch(() => showToast('複製失敗，請手動全選複製'));
+}
+
+function downloadCSV() {
+  const text = document.getElementById('csvArea').textContent;
+  if (!text || text === '載入中...') { showToast('請先等待載入完成'); return; }
+  const rows = text.split('\n').map(r => r.split('\t').map(v => '"' + v.replace(/"/g,'""') + '"').join(','));
+  const csv  = rows.join('\n');
+  const month = document.getElementById('monthSelect').value || '全部';
+  const blob  = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
+  const url   = URL.createObjectURL(blob);
+  const a     = document.createElement('a');
+  a.href = url; a.download = 'ELIZ款項認領_' + month + '.csv'; a.click();
+  URL.revokeObjectURL(url);
 }
 
 // ====== Toast ======

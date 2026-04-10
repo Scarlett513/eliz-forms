@@ -34,21 +34,51 @@
     .stylist-btn:hover { border-color: var(--gold-light); }
     .stylist-btn.active { border-color: var(--gold); background: #FBF8F3; color: var(--gold); }
 
-    /* Tabs */
+    /* Hub Tabs（3欄） */
     .tab-bar { display: flex; background: var(--white); border-radius: 14px;
       border: 1px solid #F1F5F9; margin-bottom: 16px; overflow: hidden;
       box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
-    .tab { flex: 1; padding: 13px 8px; text-align: center; font-size: 14px;
+    .tab { flex: 1; padding: 12px 4px; text-align: center; font-size: 12px;
       font-weight: 700; color: #94A3B8; cursor: pointer; transition: all 0.15s; }
     .tab.active { background: var(--gold); color: var(--white); }
 
-    /* 款項列表 */
+    /* 待認領款項 */
     .payment-item { padding: 14px; border: 2px solid #FCD34D; background: #FFFBEB;
       border-radius: 12px; margin-bottom: 10px; cursor: pointer; transition: 0.15s; }
     .payment-item:hover { border-color: var(--gold); }
     .payment-amount { font-size: 18px; font-weight: 900; color: var(--dark); }
     .payment-sub { font-size: 12px; color: #94A3B8; margin-top: 4px; font-weight: 600; }
+    .payment-created { font-size: 11px; color: #CBD5E1; margin-top: 2px; }
     .payment-hint { font-size: 11px; color: #D97706; font-weight: 700; margin-top: 6px; }
+
+    /* 認領記錄 */
+    .record-item { padding: 14px; border: 2px solid var(--border);
+      border-radius: 12px; margin-bottom: 10px; }
+    .record-item.claimed    { border-color: #86EFAC; background: #F0FDF4; }
+    .record-item.confirmed  { border-color: #93C5FD; background: #EFF6FF; }
+    .record-item.correction { border-color: #FDA4AF; background: #FFF1F2; }
+    .record-amount { font-size: 17px; font-weight: 900; }
+    .record-date { font-size: 12px; color: #94A3B8; margin-top: 2px; }
+    .record-created { font-size: 11px; color: #CBD5E1; margin-top: 1px; }
+    .record-stylist { font-size: 13px; font-weight: 700; color: var(--gold); margin-top: 6px; }
+    .record-order { font-size: 12px; color: #475569; }
+    .correction-note { font-size: 12px; color: #E11D48; font-weight: 600; margin-top: 4px; }
+
+    .status-badge { font-size: 11px; font-weight: 700; padding: 3px 9px;
+      border-radius: 6px; white-space: nowrap; }
+    .badge-claimed    { background: #DCFCE7; color: #16A34A; }
+    .badge-confirmed  { background: #DBEAFE; color: #2563EB; }
+    .badge-correction { background: #FFE4E6; color: #E11D48; }
+
+    .apply-btn { margin-top: 8px; padding: 6px 14px; border: 2px solid var(--border);
+      border-radius: 8px; background: var(--white); font-size: 12px; font-weight: 700;
+      color: #64748B; cursor: pointer; transition: 0.15s; }
+    .apply-btn:hover { border-color: #FDA4AF; color: #E11D48; }
+
+    .search-input { width: 100%; padding: 10px 12px; border: 2px solid var(--border); border-radius: 10px;
+      font-size: 14px; font-weight: 600; background: #FFF; outline: none; margin-bottom: 12px;
+      transition: border-color 0.2s; -webkit-appearance: none; }
+    .search-input:focus { border-color: var(--gold); }
 
     /* 客人列表 */
     .customer-item { padding: 14px; border: 2px solid var(--border); border-radius: 12px;
@@ -65,11 +95,14 @@
     .input-group { margin-bottom: 16px; }
     label.field-label { display: block; font-weight: 700; margin-bottom: 6px; font-size: 13px; color: #475569; }
     .req { color: #EF4444; }
-    input[type="text"], textarea { width: 100%; padding: 12px; border: 2px solid var(--border);
+    input[type="text"], textarea, select { width: 100%; padding: 12px; border: 2px solid var(--border);
       border-radius: 10px; font-size: 15px; font-weight: 600; background: #FFF;
       outline: none; transition: border-color 0.2s; }
-    input[type="text"]:focus, textarea:focus { border-color: var(--gold); }
+    input[type="text"]:focus, textarea:focus, select:focus { border-color: var(--gold); }
     textarea { resize: vertical; min-height: 60px; }
+    select { -webkit-appearance: none; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394A3B8' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
 
     .radio-group { display: flex; flex-wrap: wrap; gap: 8px; }
     .radio-group label { padding: 10px 14px; border: 2px solid var(--border); border-radius: 10px;
@@ -110,7 +143,7 @@
     .empty-msg { text-align: center; padding: 32px 16px; color: #94A3B8; font-size: 14px; font-weight: 600; }
     .loading { text-align: center; padding: 24px; color: #94A3B8; font-size: 14px; }
     .count-badge { display: inline-block; background: #EF4444; color: #FFF; font-size: 11px;
-      font-weight: 800; padding: 1px 7px; border-radius: 10px; margin-left: 6px; vertical-align: middle; }
+      font-weight: 800; padding: 1px 7px; border-radius: 10px; margin-left: 4px; vertical-align: middle; }
 
     .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
       background: #333; color: #FFF; padding: 12px 24px; border-radius: 12px;
@@ -136,16 +169,19 @@
     </div>
   </div>
 
-  <!-- 畫面 2：主頁（兩個 Tab） -->
+  <!-- 畫面 2：主頁（三個 Tab） -->
   <div id="screenHub" style="display:none">
     <button class="back-btn" onclick="showScreen('stylist')">← 返回選擇</button>
 
     <div class="tab-bar">
       <div class="tab active" id="tabBtnClaim" onclick="switchHubTab('claim')">
-        待認領款項<span class="count-badge" id="claimCount" style="display:none">0</span>
+        待認領<span class="count-badge" id="claimCount" style="display:none">0</span>
       </div>
       <div class="tab" id="tabBtnWarranty" onclick="switchHubTab('warranty')">
         保固回填<span class="count-badge" id="warrantyCount" style="display:none">0</span>
+      </div>
+      <div class="tab" id="tabBtnRecords" onclick="switchHubTab('records')">
+        認領記錄
       </div>
     </div>
 
@@ -162,6 +198,16 @@
       <div class="card">
         <div class="section-title"><span id="hubStylistName"></span> — 待回填客戶</div>
         <div id="customerList"><div class="loading">載入中...</div></div>
+      </div>
+    </div>
+
+    <!-- Tab 認領記錄 -->
+    <div id="tabRecords" style="display:none">
+      <div class="card">
+        <div class="section-title">認領記錄</div>
+        <input type="search" class="search-input" id="recordsSearch"
+          placeholder="搜尋金額、末五碼、客戶姓名、家配師..." oninput="filterRecords()">
+        <div id="recordsList"><div class="loading">載入中...</div></div>
       </div>
     </div>
   </div>
@@ -320,6 +366,30 @@
       </form>
     </div>
   </div>
+
+  <!-- 畫面 6：申請更正 -->
+  <div id="screenCorrection" style="display:none">
+    <button class="back-btn" onclick="showScreen('hub'); switchHubTab('records')">← 返回</button>
+    <div class="card">
+      <div class="section-title">申請更正認領</div>
+      <div style="background:#FFF1F2;border:2px solid #FDA4AF;border-radius:10px;padding:12px 14px;margin-bottom:16px;">
+        <div style="font-size:20px;font-weight:900;" id="correctionAmount"></div>
+        <div style="font-size:13px;color:#94A3B8;margin-top:3px;" id="correctionMeta"></div>
+        <div style="font-size:13px;font-weight:700;color:#B59E6D;margin-top:6px;">原認領：<span id="correctionOriginalStylist"></span></div>
+      </div>
+      <div class="input-group">
+        <label class="field-label">正確應認領人 <span class="req">*</span></label>
+        <select id="correctionNewStylist">
+          <option value="">請選擇正確的家配師</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label class="field-label">更正原因（選填）</label>
+        <textarea id="correctionReason" placeholder="例：認錯款項、金額相同搞混..."></textarea>
+      </div>
+      <button class="submit-btn" id="correctionSubmitBtn" onclick="submitCorrection()">送出申請</button>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -332,8 +402,11 @@ const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbysXC8iOpXg9Y3_0qxZ
 let currentStylist = '';
 let currentPayment = null;
 let currentCustomer = null;
+let currentCorrectionPayment = null;
 let pendingPayments = [];
 let warrantyCustomers = [];
+let allRecords = [];
+let stylistData = { taipei: [], taichung: [] };
 
 // ====== 初始化 ======
 document.addEventListener('DOMContentLoaded', function() {
@@ -349,7 +422,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ====== 畫面切換 ======
 function showScreen(screen) {
-  var screens = ['screenStylist','screenHub','screenClaim','screenClaimSuccess','screenWarrantyForm'];
+  var screens = ['screenStylist','screenHub','screenClaim','screenClaimSuccess','screenWarrantyForm','screenCorrection'];
   screens.forEach(function(s) {
     document.getElementById(s).style.display = s === 'screen' + cap(screen) ? 'block' : 'none';
   });
@@ -359,10 +432,13 @@ function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
 // ====== Hub Tab 切換 ======
 function switchHubTab(tab) {
-  document.getElementById('tabClaim').style.display   = tab === 'claim'   ? 'block' : 'none';
+  document.getElementById('tabClaim').style.display    = tab === 'claim'   ? 'block' : 'none';
   document.getElementById('tabWarranty').style.display = tab === 'warranty' ? 'block' : 'none';
+  document.getElementById('tabRecords').style.display  = tab === 'records'  ? 'block' : 'none';
   document.getElementById('tabBtnClaim').classList.toggle('active', tab === 'claim');
   document.getElementById('tabBtnWarranty').classList.toggle('active', tab === 'warranty');
+  document.getElementById('tabBtnRecords').classList.toggle('active', tab === 'records');
+  if (tab === 'records' && allRecords.length === 0) loadRecords();
 }
 
 // ====== 載入家配師 ======
@@ -370,6 +446,7 @@ function loadStylists() {
   fetch(GAS_API_URL + '?action=getStylistList')
     .then(function(r) { return r.json(); })
     .then(function(data) {
+      stylistData = data;
       var grid = document.getElementById('stylistGrid');
       grid.innerHTML = '';
       var hasData = (data.taipei && data.taipei.length) || (data.taichung && data.taichung.length);
@@ -443,10 +520,11 @@ function renderPaymentList() {
     div.className = 'payment-item';
     div.innerHTML =
       '<div class="payment-amount">$' + Number(p.amount).toLocaleString() + '</div>' +
-      '<div class="payment-sub">' + p.paymentDate +
+      '<div class="payment-sub">匯款：' + p.paymentDate +
         (p.last5digits ? '　末五碼：' + p.last5digits : '') +
         (p.customerName ? '　' + p.customerName : '') +
       '</div>' +
+      '<div class="payment-created">新增：' + (p.createdAt || '—') + '</div>' +
       '<div class="payment-hint">點擊認領這筆款項</div>';
     div.onclick = function() { openClaimForm(p); };
     el.appendChild(div);
@@ -458,7 +536,7 @@ function openClaimForm(payment) {
   currentPayment = payment;
   document.getElementById('claimAmount').textContent = '$' + Number(payment.amount).toLocaleString();
   document.getElementById('claimMeta').textContent =
-    payment.paymentDate +
+    '匯款日期：' + payment.paymentDate +
     (payment.last5digits ? '　末五碼：' + payment.last5digits : '') +
     (payment.customerName ? '　' + payment.customerName : '');
 
@@ -473,15 +551,15 @@ function openClaimForm(payment) {
 function submitClaim() {
   var orderNumber = document.getElementById('claimOrderNumber').value.trim();
   if (!orderNumber) { showToast('請填寫訂單編號'); return; }
-  var clientType = getRadioValue('claimClientType');
+  var clientType   = getRadioValue('claimClientType');
   if (!clientType) { showToast('請選擇客戶類型'); return; }
   var projectScale = getRadioValue('claimProjectScale');
   if (!projectScale) { showToast('請選擇案件規模'); return; }
-  var spaceType = getRadioValue('claimSpaceType');
+  var spaceType    = getRadioValue('claimSpaceType');
   if (!spaceType) { showToast('請選擇空間類型'); return; }
-  var mainItems = getCheckValues('claimMainItems');
+  var mainItems    = getCheckValues('claimMainItems');
   if (!mainItems.length) { showToast('請選擇主要品項'); return; }
-  var priceRange = getRadioValue('claimPriceRange');
+  var priceRange   = getRadioValue('claimPriceRange');
   if (!priceRange) { showToast('請選擇購買金額區間'); return; }
 
   var btn = document.getElementById('claimSubmitBtn');
@@ -491,28 +569,28 @@ function submitClaim() {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain' },
     body: JSON.stringify({
-      action: 'claimPayment',
-      rowIndex: currentPayment.rowIndex,
-      stylist: currentStylist,
-      orderNumber: orderNumber,
-      clientType: clientType,
+      action:       'claimPayment',
+      rowIndex:     currentPayment.rowIndex,
+      stylist:      currentStylist,
+      orderNumber:  orderNumber,
+      clientType:   clientType,
       projectScale: projectScale,
-      spaceType: spaceType,
-      mainItems: mainItems.join('、'),
-      priceRange: priceRange,
-      note: document.getElementById('claimNote').value.trim()
+      spaceType:    spaceType,
+      mainItems:    mainItems.join('、'),
+      priceRange:   priceRange,
+      note:         document.getElementById('claimNote').value.trim()
     })
   })
   .then(function(r) { return r.json(); })
   .then(function(result) {
     if (result.success) {
-      // 從 pending 列表移除
       pendingPayments = pendingPayments.filter(function(p) {
         return p.rowIndex !== currentPayment.rowIndex;
       });
       document.getElementById('successMeta').textContent =
         '$' + Number(currentPayment.amount).toLocaleString() + '　訂單編號：' + orderNumber;
       showScreen('claimSuccess');
+      allRecords = []; // 清空快取，下次進認領記錄時重新載入
     } else {
       showToast('送出失敗：' + (result.error || '未知錯誤'));
     }
@@ -535,6 +613,148 @@ function continueClaimFlow() {
   } else {
     badge.style.display = 'none';
   }
+}
+
+// ====== 認領記錄 Tab ======
+function loadRecords() {
+  document.getElementById('recordsList').innerHTML = '<div class="loading">載入中...</div>';
+  fetch(GAS_API_URL + '?action=getPayments&filter=claimed')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      allRecords = data.payments || [];
+      filterRecords();
+    })
+    .catch(function() {
+      document.getElementById('recordsList').innerHTML = '<div class="empty-msg">載入失敗，請重新整理</div>';
+    });
+}
+
+function filterRecords() {
+  var q = (document.getElementById('recordsSearch').value || '').trim().toLowerCase();
+  var filtered = q ? allRecords.filter(function(p) {
+    return String(p.amount).includes(q) ||
+      (p.last5digits && p.last5digits.toLowerCase().includes(q)) ||
+      (p.customerName && p.customerName.toLowerCase().includes(q)) ||
+      (p.stylist && p.stylist.toLowerCase().includes(q));
+  }) : allRecords;
+  renderRecords(filtered);
+}
+
+function renderRecords(records) {
+  var el = document.getElementById('recordsList');
+  if (records.length === 0) {
+    el.innerHTML = '<div class="empty-msg">目前沒有認領記錄</div>';
+    return;
+  }
+  el.innerHTML = '';
+  records.forEach(function(p) {
+    var isCorrection = p.status === '待MKT更正確認';
+    var rowClass = isCorrection ? 'correction' : p.mktConfirmed ? 'confirmed' : 'claimed';
+    var badgeClass = isCorrection ? 'badge-correction' : p.mktConfirmed ? 'badge-confirmed' : 'badge-claimed';
+    var badgeText  = isCorrection ? '更正審核中' : p.mktConfirmed ? 'MKT已確認' : '已認領';
+    var canApply   = p.status === '已認領';
+
+    var div = document.createElement('div');
+    div.className = 'record-item ' + rowClass;
+    div.innerHTML =
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;">' +
+        '<div>' +
+          '<div class="record-amount">$' + Number(p.amount).toLocaleString() + '</div>' +
+          '<div class="record-date">匯款：' + p.paymentDate +
+            (p.last5digits ? '　末五碼：' + p.last5digits : '') +
+            (p.customerName ? '　' + p.customerName : '') +
+          '</div>' +
+          '<div class="record-created">新增：' + (p.createdAt || '—') + '</div>' +
+        '</div>' +
+        '<span class="status-badge ' + badgeClass + '">' + badgeText + '</span>' +
+      '</div>' +
+      (p.stylist ? '<div class="record-stylist">' + p.stylist + '</div>' : '') +
+      (p.orderNumber ? '<div class="record-order">訂編：' + p.orderNumber + '</div>' : '') +
+      (isCorrection ? '<div class="correction-note">更正審核中，等待 MKT 確認...</div>' : '') +
+      (canApply
+        ? '<button class="apply-btn" onclick="openCorrectionForm(this)">申請更正</button>'
+        : '');
+
+    // 把資料附在 DOM 上讓 openCorrectionForm 取用
+    div.dataset.payment = JSON.stringify(p);
+    var btn = div.querySelector('.apply-btn');
+    if (btn) {
+      btn.onclick = function(e) {
+        e.stopPropagation();
+        openCorrectionForm(p);
+      };
+    }
+
+    el.appendChild(div);
+  });
+}
+
+// ====== 申請更正 ======
+function openCorrectionForm(payment) {
+  // 只有本人才能申請（但讓所有人看到按鈕，點了才提示）
+  if (payment.stylist !== currentStylist) {
+    showToast('只有原認領業務（' + payment.stylist + '）才能申請更正');
+    return;
+  }
+
+  currentCorrectionPayment = payment;
+  document.getElementById('correctionAmount').textContent = '$' + Number(payment.amount).toLocaleString();
+  document.getElementById('correctionMeta').textContent =
+    '匯款日期：' + payment.paymentDate +
+    (payment.last5digits ? '　末五碼：' + payment.last5digits : '');
+  document.getElementById('correctionOriginalStylist').textContent = payment.stylist;
+
+  // 填入家配師下拉選單（排除本人）
+  var sel = document.getElementById('correctionNewStylist');
+  sel.innerHTML = '<option value="">請選擇正確的家配師</option>';
+  var all = (stylistData.taipei || []).concat(stylistData.taichung || []).sort();
+  all.forEach(function(name) {
+    if (name !== payment.stylist) {
+      var opt = document.createElement('option');
+      opt.value = name; opt.textContent = name;
+      sel.appendChild(opt);
+    }
+  });
+
+  document.getElementById('correctionReason').value = '';
+  showScreen('correction');
+}
+
+function submitCorrection() {
+  var newStylist = document.getElementById('correctionNewStylist').value;
+  if (!newStylist) { showToast('請選擇正確的家配師'); return; }
+
+  var btn = document.getElementById('correctionSubmitBtn');
+  btn.disabled = true; btn.textContent = '送出中...';
+
+  fetch(GAS_API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({
+      action:     'requestCorrection',
+      rowIndex:   currentCorrectionPayment.rowIndex,
+      requester:  currentStylist,
+      newStylist: newStylist,
+      reason:     document.getElementById('correctionReason').value.trim()
+    })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(result) {
+    if (result.success) {
+      showToast('✅ 已送出更正申請，待 MKT 確認');
+      allRecords = [];
+      showScreen('hub');
+      switchHubTab('records');
+      loadRecords();
+    } else {
+      showToast('失敗：' + (result.error || '未知錯誤'));
+    }
+    btn.disabled = false; btn.textContent = '送出申請';
+  })
+  .catch(function() {
+    showToast('網路錯誤，請重試');
+    btn.disabled = false; btn.textContent = '送出申請';
+  });
 }
 
 // ====== 保固回填（客戶列表） ======
@@ -583,24 +803,26 @@ function openWarrantyForm(customer) {
   document.getElementById('formCustomerName').textContent = customer.customerName;
   document.getElementById('formCustomerMeta').textContent =
     customer.phone + '　' + customer.store + '　登記日：' + customer.registDate;
+
   document.getElementById('warrantyForm').reset();
   document.querySelectorAll('#warrantyForm .radio-group label, #warrantyForm .check-group label')
     .forEach(function(l) { l.classList.remove('selected'); });
+
   showScreen('warrantyForm');
 }
 
 function submitWarranty() {
-  var orderNumber = document.getElementById('warrantyOrderNumber').value.trim();
+  var orderNumber  = document.getElementById('warrantyOrderNumber').value.trim();
   if (!orderNumber) { showToast('請填寫訂單編號'); return; }
-  var clientType = getRadioValue('wClientType');
+  var clientType   = getRadioValue('wClientType');
   if (!clientType) { showToast('請選擇客戶類型'); return; }
   var projectScale = getRadioValue('wProjectScale');
   if (!projectScale) { showToast('請選擇案件規模'); return; }
-  var spaceType = getRadioValue('wSpaceType');
+  var spaceType    = getRadioValue('wSpaceType');
   if (!spaceType) { showToast('請選擇空間類型'); return; }
-  var mainItems = getCheckValues('wMainItems');
+  var mainItems    = getCheckValues('wMainItems');
   if (!mainItems.length) { showToast('請選擇主要品項'); return; }
-  var priceRange = getRadioValue('wPriceRange');
+  var priceRange   = getRadioValue('wPriceRange');
   if (!priceRange) { showToast('請選擇購買金額區間'); return; }
 
   var btn = document.getElementById('warrantySubmitBtn');
@@ -610,27 +832,28 @@ function submitWarranty() {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain' },
     body: JSON.stringify({
-      action: 'updateCustomer',
-      rowIndex: currentCustomer.rowIndex,
-      orderNumber: orderNumber,
-      clientType: clientType,
+      action:       'updateCustomer',
+      rowIndex:     currentCustomer.rowIndex,
+      orderNumber:  orderNumber,
+      clientType:   clientType,
       projectScale: projectScale,
-      spaceType: spaceType,
-      mainItems: mainItems.join('、'),
-      priceRange: priceRange,
-      note: document.getElementById('warrantyNote').value.trim()
+      spaceType:    spaceType,
+      mainItems:    mainItems.join('、'),
+      priceRange:   priceRange,
+      note:         document.getElementById('warrantyNote').value.trim()
     })
   })
   .then(function(r) { return r.json(); })
   .then(function(result) {
     if (result.success) {
-      showToast('已送出！');
-      for (var i = 0; i < warrantyCustomers.length; i++) {
-        if (warrantyCustomers[i].rowIndex === currentCustomer.rowIndex) {
-          warrantyCustomers[i].done = true; break;
-        }
-      }
-      setTimeout(function() { showScreen('hub'); switchHubTab('warranty'); renderCustomerList(); }, 800);
+      currentCustomer.done = true;
+      warrantyCustomers = warrantyCustomers.map(function(c) {
+        return c.rowIndex === currentCustomer.rowIndex ? Object.assign({}, c, { done: true }) : c;
+      });
+      showToast('✅ 回填完成！');
+      showScreen('hub');
+      switchHubTab('warranty');
+      renderCustomerList();
     } else {
       showToast('送出失敗：' + (result.error || '未知錯誤'));
     }
@@ -642,30 +865,36 @@ function submitWarranty() {
   });
 }
 
-// ====== 工具函式 ======
-function getRadioValue(name) {
-  var el = document.querySelector('input[name="' + name + '"]:checked');
-  return el ? el.value : '';
-}
-function getCheckValues(name) {
-  return Array.from(document.querySelectorAll('input[name="' + name + '"]:checked'))
-    .map(function(el) { return el.value; });
-}
+// ====== 表單輔助 ======
 function selectRadio(label) {
-  var group = label.parentElement;
-  group.querySelectorAll('label').forEach(function(l) { l.classList.remove('selected'); });
+  var name = label.querySelector('input').name;
+  document.querySelectorAll('input[name="' + name + '"]').forEach(function(inp) {
+    inp.parentElement.classList.remove('selected');
+  });
   label.classList.add('selected');
   label.querySelector('input').checked = true;
 }
+
 function toggleCheck(label) {
-  var input = label.querySelector('input');
-  input.checked = !input.checked;
-  label.classList.toggle('selected', input.checked);
+  label.classList.toggle('selected');
+  label.querySelector('input').checked = label.classList.contains('selected');
 }
+
+function getRadioValue(name) {
+  var checked = document.querySelector('input[name="' + name + '"]:checked');
+  return checked ? checked.value : '';
+}
+
+function getCheckValues(name) {
+  return Array.from(document.querySelectorAll('input[name="' + name + '"]:checked')).map(function(i) { return i.value; });
+}
+
+// ====== Toast ======
 function showToast(msg) {
   var t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(function() { t.classList.remove('show'); }, 2500);
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2800);
 }
 </script>
 </body>

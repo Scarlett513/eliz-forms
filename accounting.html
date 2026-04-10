@@ -47,7 +47,7 @@
     label.field-label { display: block; font-weight: 700; margin-bottom: 6px;
       font-size: 13px; color: #475569; }
     .req { color: #EF4444; }
-    input[type="text"], input[type="number"], input[type="date"] {
+    input[type="text"], input[type="number"], input[type="date"], input[type="search"] {
       width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 10px;
       font-size: 15px; font-weight: 600; background: #FFF; outline: none;
       transition: border-color 0.2s; }
@@ -60,34 +60,46 @@
     .submit-btn:active { transform: scale(0.97); }
     .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* Payment list */
-    .refresh-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-    .refresh-btn { padding: 8px 14px; border: 2px solid var(--border); border-radius: 10px;
-      background: var(--white); font-size: 13px; font-weight: 700; color: #64748B;
-      cursor: pointer; transition: 0.15s; }
-    .refresh-btn:hover { border-color: var(--gold-light); }
+    /* Payment list toolbar */
+    .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 8px; flex-wrap: wrap; }
     .filter-group { display: flex; gap: 6px; }
     .filter-btn { padding: 7px 12px; border: 2px solid var(--border); border-radius: 8px;
       background: var(--white); font-size: 12px; font-weight: 700; color: #94A3B8;
       cursor: pointer; transition: 0.15s; }
     .filter-btn.active { border-color: var(--gold); background: #FBF8F3; color: var(--gold); }
 
+    .icon-btn { padding: 7px 12px; border: 2px solid var(--border); border-radius: 8px;
+      background: var(--white); font-size: 12px; font-weight: 700; color: #64748B;
+      cursor: pointer; white-space: nowrap; transition: 0.15s; }
+    .icon-btn:hover { border-color: var(--gold-light); }
+    .icon-btn.primary { border-color: var(--gold); background: #FBF8F3; color: var(--gold); }
+    .icon-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .search-input { width: 100%; padding: 10px 12px; border: 2px solid var(--border); border-radius: 10px;
+      font-size: 14px; font-weight: 600; background: #FFF; outline: none; margin-bottom: 12px;
+      transition: border-color 0.2s; }
+    .search-input:focus { border-color: var(--gold); }
+
+    /* Payment items */
     .payment-item { padding: 14px; border: 2px solid var(--border); border-radius: 12px;
       margin-bottom: 10px; }
-    .payment-item.pending { border-color: #FCD34D; background: #FFFBEB; }
-    .payment-item.claimed { border-color: #86EFAC; background: #F0FDF4; }
+    .payment-item.pending   { border-color: #FCD34D; background: #FFFBEB; }
+    .payment-item.claimed   { border-color: #86EFAC; background: #F0FDF4; }
     .payment-item.confirmed { border-color: #93C5FD; background: #EFF6FF; }
+    .payment-item.correction { border-color: #FDA4AF; background: #FFF1F2; }
 
     .payment-main { display: flex; justify-content: space-between; align-items: flex-start; }
     .payment-amount { font-size: 18px; font-weight: 900; color: var(--dark); }
     .payment-date { font-size: 13px; color: #94A3B8; font-weight: 600; margin-top: 2px; }
+    .payment-created { font-size: 11px; color: #CBD5E1; margin-top: 1px; }
     .payment-meta { font-size: 12px; color: #94A3B8; margin-top: 6px; }
 
     .status-badge { font-size: 11px; font-weight: 700; padding: 3px 9px;
       border-radius: 6px; white-space: nowrap; }
-    .badge-pending  { background: #FEF3C7; color: #D97706; }
-    .badge-claimed  { background: #DCFCE7; color: #16A34A; }
-    .badge-confirmed { background: #DBEAFE; color: #2563EB; }
+    .badge-pending    { background: #FEF3C7; color: #D97706; }
+    .badge-claimed    { background: #DCFCE7; color: #16A34A; }
+    .badge-confirmed  { background: #DBEAFE; color: #2563EB; }
+    .badge-correction { background: #FFE4E6; color: #E11D48; }
 
     .stylist-tag { font-size: 13px; font-weight: 700; color: var(--gold); margin-top: 4px; }
     .order-tag   { font-size: 12px; color: #475569; }
@@ -159,22 +171,38 @@
             <label class="field-label">客戶姓名</label>
             <input type="text" id="customerName" placeholder="選填">
           </div>
-          <button type="submit" class="submit-btn" id="addBtn">送出</button>
+          <button type="submit" class="submit-btn" id="addBtn">新增款項</button>
         </form>
+      </div>
+      <div class="card" style="background:#FFFBEB;border-color:#FCD34D;">
+        <div style="font-size:13px;font-weight:700;color:#D97706;margin-bottom:8px;">💡 新增後記得發送通知</div>
+        <div style="font-size:12px;color:#92400E;">新增款項後不會自動發送 LINE 通知。請到「認領狀況」頁，確認所有待認領筆數後，再統一點「發送待認領通知」。</div>
       </div>
     </div>
 
     <!-- Tab 2: 認領狀況 -->
     <div id="tabStatus" style="display:none">
       <div class="card">
-        <div class="refresh-row">
+        <!-- 搜尋 -->
+        <input type="search" class="search-input" id="searchInput"
+          placeholder="搜尋金額、末五碼、客戶姓名..." oninput="filterPayments()">
+
+        <!-- 工具列 -->
+        <div class="toolbar">
           <div class="filter-group">
-            <div class="filter-btn active" id="filterAll" onclick="setFilter('all')">全部</div>
-            <div class="filter-btn" id="filterPending" onclick="setFilter('pending')">待認領</div>
-            <div class="filter-btn" id="filterClaimed" onclick="setFilter('claimed')">已認領</div>
+            <div class="filter-btn active" id="filterAll"     onclick="setFilter('all')">全部</div>
+            <div class="filter-btn"        id="filterPending" onclick="setFilter('pending')">待認領</div>
+            <div class="filter-btn"        id="filterClaimed" onclick="setFilter('claimed')">已認領</div>
           </div>
-          <button class="refresh-btn" onclick="loadPayments()">↻ 刷新</button>
+          <button class="icon-btn" onclick="loadPayments()">↻ 刷新</button>
         </div>
+
+        <!-- 發送通知 + 下載按鈕 -->
+        <div style="display:flex;gap:8px;margin-bottom:14px;">
+          <button class="icon-btn primary" style="flex:1;" id="notifyBtn" onclick="sendBatchNotify()">📣 發送待認領通知</button>
+          <button class="icon-btn" style="flex:1;" onclick="downloadCSV()">⬇ 下載 Excel</button>
+        </div>
+
         <div id="paymentList"><div class="loading">載入中...</div></div>
       </div>
     </div>
@@ -186,11 +214,11 @@
 <script>
 // ============ CONFIG ============
 const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbysXC8iOpXg9Y3_0qxZQmTz4xsCzsDWRUJufzUyjVVqCBobgTNAvA1Q5XYsILnrClha/exec';
-// 修改以下密碼後部署
-const ACCOUNTING_PIN = '0000';
+const ACCOUNTING_PIN = '1111';
 // ================================
 
 let currentFilter = 'all';
+let allLoadedPayments = [];
 
 // ====== PIN ======
 function checkPin() {
@@ -208,7 +236,6 @@ function checkPin() {
 
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('pinInput').focus();
-
   document.getElementById('addForm').addEventListener('submit', function(e) {
     e.preventDefault();
     submitPayment();
@@ -234,12 +261,12 @@ function switchTab(tab) {
 
 // ====== 新增款項 ======
 function submitPayment() {
-  const date = document.getElementById('paymentDate').value;
+  const date   = document.getElementById('paymentDate').value;
   const amount = document.getElementById('amount').value;
   if (!date || !amount) { showToast('請填寫必填欄位'); return; }
 
   const btn = document.getElementById('addBtn');
-  btn.disabled = true; btn.textContent = '送出中...';
+  btn.disabled = true; btn.textContent = '新增中...';
 
   fetch(GAS_API_URL, {
     method: 'POST',
@@ -255,34 +282,71 @@ function submitPayment() {
   .then(r => r.json())
   .then(result => {
     if (result.success) {
-      showToast('✅ 已新增，業務將收到待認領通知');
+      showToast('✅ 已新增，請記得到「認領狀況」發送通知');
       document.getElementById('addForm').reset();
       setTodayDate();
     } else {
       showToast('送出失敗：' + (result.error || '未知錯誤'));
     }
-    btn.disabled = false; btn.textContent = '送出';
+    btn.disabled = false; btn.textContent = '新增款項';
   })
-  .catch(() => { showToast('網路錯誤，請重試'); btn.disabled = false; btn.textContent = '送出'; });
+  .catch(() => { showToast('網路錯誤，請重試'); btn.disabled = false; btn.textContent = '新增款項'; });
+}
+
+// ====== 批次發送 LINE 通知 ======
+function sendBatchNotify() {
+  const btn = document.getElementById('notifyBtn');
+  btn.disabled = true; btn.textContent = '發送中...';
+
+  fetch(GAS_API_URL + '?action=batchNotify')
+    .then(r => r.json())
+    .then(function(result) {
+      if (result.success) {
+        showToast(result.count > 0
+          ? '✅ 已發送通知（' + result.count + ' 筆待認領）'
+          : '目前沒有待認領款項');
+      } else {
+        showToast('發送失敗：' + (result.error || '未知錯誤'));
+      }
+      btn.disabled = false; btn.textContent = '📣 發送待認領通知';
+    })
+    .catch(function() {
+      showToast('網路錯誤，請重試');
+      btn.disabled = false; btn.textContent = '📣 發送待認領通知';
+    });
 }
 
 // ====== 認領狀況 ======
 function setFilter(f) {
   currentFilter = f;
-  ['All','Pending','Claimed'].forEach(x => {
+  ['All', 'Pending', 'Claimed'].forEach(x => {
     document.getElementById('filter' + x).classList.toggle('active', f === x.toLowerCase());
   });
-  loadPayments();
+  filterPayments();
 }
 
 function loadPayments() {
   document.getElementById('paymentList').innerHTML = '<div class="loading">載入中...</div>';
   fetch(GAS_API_URL + '?action=getPayments&filter=' + currentFilter)
     .then(r => r.json())
-    .then(data => renderPayments(data.payments || []))
+    .then(data => {
+      allLoadedPayments = data.payments || [];
+      filterPayments();
+    })
     .catch(() => {
       document.getElementById('paymentList').innerHTML = '<div class="empty-msg">載入失敗，請刷新</div>';
     });
+}
+
+function filterPayments() {
+  const q = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+  const filtered = q ? allLoadedPayments.filter(function(p) {
+    return String(p.amount).includes(q) ||
+      (p.last5digits && p.last5digits.toLowerCase().includes(q)) ||
+      (p.customerName && p.customerName.toLowerCase().includes(q)) ||
+      (p.stylist && p.stylist.toLowerCase().includes(q));
+  }) : allLoadedPayments;
+  renderPayments(filtered);
 }
 
 function renderPayments(payments) {
@@ -294,11 +358,15 @@ function renderPayments(payments) {
 
   el.innerHTML = '';
   payments.forEach(function(p) {
+    const isCorrection = p.status === '待MKT更正確認';
     const statusClass = p.status === '待認領' ? 'pending'
+      : isCorrection ? 'correction'
       : p.mktConfirmed ? 'confirmed' : 'claimed';
     const badgeClass = p.status === '待認領' ? 'badge-pending'
+      : isCorrection ? 'badge-correction'
       : p.mktConfirmed ? 'badge-confirmed' : 'badge-claimed';
-    const badgeText = p.mktConfirmed ? 'MKT已確認' : p.status;
+    const badgeText = p.mktConfirmed ? 'MKT已確認'
+      : isCorrection ? '更正審核中' : p.status;
 
     const item = document.createElement('div');
     item.className = 'payment-item ' + statusClass;
@@ -306,18 +374,53 @@ function renderPayments(payments) {
       '<div class="payment-main">' +
         '<div>' +
           '<div class="payment-amount">$' + Number(p.amount).toLocaleString() + '</div>' +
-          '<div class="payment-date">' + p.paymentDate +
+          '<div class="payment-date">匯款：' + p.paymentDate +
             (p.last5digits ? '　末五碼：' + p.last5digits : '') +
             (p.customerName ? '　' + p.customerName : '') +
           '</div>' +
+          '<div class="payment-created">新增：' + (p.createdAt || '—') + '</div>' +
         '</div>' +
         '<span class="status-badge ' + badgeClass + '">' + badgeText + '</span>' +
       '</div>' +
-      (p.stylist ? '<div class="stylist-tag">' + p.stylist + '</div>' +
-        '<div class="order-tag">訂編：' + (p.orderNumber || '—') + '</div>' : '') +
+      (p.stylist
+        ? '<div class="stylist-tag">' + p.stylist + '</div>' +
+          '<div class="order-tag">訂編：' + (p.orderNumber || '—') + '</div>'
+        : '') +
       (p.claimedAt ? '<div class="payment-meta">認領時間：' + p.claimedAt + '</div>' : '');
     el.appendChild(item);
   });
+}
+
+// ====== 下載 CSV ======
+function downloadCSV() {
+  if (allLoadedPayments.length === 0) { showToast('請先載入認領狀況'); return; }
+
+  const rows = [['新增日期', '匯款日期', '金額', '末五碼', '客戶姓名', '認領家配師', '訂單編號', '狀態', '認領時間']];
+  allLoadedPayments.forEach(function(p) {
+    rows.push([
+      p.createdAt || '',
+      p.paymentDate,
+      p.amount,
+      p.last5digits || '',
+      p.customerName || '',
+      p.stylist || '',
+      p.orderNumber || '',
+      p.status,
+      p.claimedAt || ''
+    ]);
+  });
+
+  const csv = rows.map(function(r) {
+    return r.map(function(v) { return '"' + String(v).replace(/"/g, '""') + '"'; }).join(',');
+  }).join('\n');
+
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = 'ELIZ款項認領.csv';
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 // ====== Toast ======
