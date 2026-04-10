@@ -475,7 +475,7 @@ function loadStylists() {
     });
 }
 
-// ====== 選家配師 → 進 Hub ======
+// ====== 選家配師 → 進 Hub（單一 getInitData 請求）======
 function selectStylist(name, btn) {
   document.querySelectorAll('.stylist-btn').forEach(function(b) { b.classList.remove('active'); });
   btn.classList.add('active');
@@ -483,11 +483,44 @@ function selectStylist(name, btn) {
   document.getElementById('hubStylistName').textContent = name;
   showScreen('hub');
   switchHubTab('claim');
-  loadPendingPayments();
-  loadWarrantyCustomers();
+  loadInitData();
 }
 
-// ====== 待認領款項 ======
+function loadInitData() {
+  document.getElementById('paymentList').innerHTML  = '<div class="loading">載入中...</div>';
+  document.getElementById('customerList').innerHTML = '<div class="loading">載入中...</div>';
+
+  fetch(GAS_API_URL + '?action=getInitData&stylist=' + encodeURIComponent(currentStylist))
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      // 待認領款項
+      pendingPayments = data.pendingPayments || [];
+      renderPaymentList();
+      var claimBadge = document.getElementById('claimCount');
+      if (pendingPayments.length > 0) {
+        claimBadge.textContent = pendingPayments.length;
+        claimBadge.style.display = 'inline-block';
+      } else {
+        claimBadge.style.display = 'none';
+      }
+      // 保固客戶
+      warrantyCustomers = data.customers || [];
+      renderCustomerList();
+      var warrantyBadge = document.getElementById('warrantyCount');
+      if (warrantyCustomers.length > 0) {
+        warrantyBadge.textContent = warrantyCustomers.length;
+        warrantyBadge.style.display = 'inline-block';
+      } else {
+        warrantyBadge.style.display = 'none';
+      }
+    })
+    .catch(function() {
+      document.getElementById('paymentList').innerHTML  = '<div class="empty-msg">載入失敗，請重新整理</div>';
+      document.getElementById('customerList').innerHTML = '<div class="empty-msg">載入失敗，請重新整理</div>';
+    });
+}
+
+// ====== 待認領款項（獨立刷新用）======
 function loadPendingPayments() {
   document.getElementById('paymentList').innerHTML = '<div class="loading">載入中...</div>';
   fetch(GAS_API_URL + '?action=getPendingPayments')

@@ -145,8 +145,9 @@
     </header>
 
     <div class="tab-bar">
-      <div class="tab active" id="tabBtnAdd" onclick="switchTab('add')">新增款項</div>
-      <div class="tab" id="tabBtnStatus" onclick="switchTab('status')">認領狀況</div>
+      <div class="tab active" id="tabBtnAdd"    onclick="switchTab('add')">新增款項</div>
+      <div class="tab"        id="tabBtnBatch"  onclick="switchTab('batch')">批次匯入</div>
+      <div class="tab"        id="tabBtnStatus" onclick="switchTab('status')">認領狀況</div>
     </div>
 
     <!-- Tab 1: 新增款項 -->
@@ -180,7 +181,34 @@
       </div>
     </div>
 
-    <!-- Tab 2: 認領狀況 -->
+    <!-- Tab 2: 批次匯入 -->
+    <div id="tabBatch" style="display:none">
+      <div class="card">
+        <div class="section-title">批次匯入銀行明細</div>
+        <div style="background:#EFF6FF;border:1px solid #93C5FD;border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:#1E40AF;">
+          <b>格式說明：</b>每行一筆，支援以下格式：<br>
+          <span style="font-family:monospace;color:#1D4ED8;">1. 2025/01/20 $28,000 (#57635)</span>　←末五碼<br>
+          <span style="font-family:monospace;color:#1D4ED8;">2. 2025/12/18 $34,000 (王進福)</span>　←客戶姓名<br>
+          括號可省略；日期可寫 MM/DD（自動補今年）
+        </div>
+        <div class="input-group">
+          <label class="field-label">貼上銀行明細</label>
+          <textarea id="batchInput" rows="8"
+            style="font-family:monospace;font-size:13px;line-height:1.6;border:2px solid #E2E8F0;border-radius:10px;padding:12px;width:100%;outline:none;resize:vertical;"
+            placeholder="1. 2025/01/20 $28,000 (#57635)&#10;2. 2025/12/18 $34,000 (王進福)&#10;3. 2026/01/05 $15,000"></textarea>
+        </div>
+        <button class="submit-btn" style="background:#3B82F6;box-shadow:none;margin-bottom:12px;" onclick="parseBatch()">解析預覽</button>
+
+        <div id="batchPreview" style="display:none">
+          <div style="font-size:13px;font-weight:700;color:#475569;margin-bottom:8px;" id="batchPreviewTitle"></div>
+          <div id="batchPreviewList"></div>
+          <div id="batchErrorList" style="margin-bottom:10px;"></div>
+          <button class="submit-btn" id="batchSubmitBtn" onclick="submitBatch()" style="display:none">確認批次新增</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 3: 認領狀況 -->
     <div id="tabStatus" style="display:none">
       <div class="card">
         <!-- 搜尋 -->
@@ -253,8 +281,10 @@ function setTodayDate() {
 // ====== Tabs ======
 function switchTab(tab) {
   document.getElementById('tabAdd').style.display    = tab === 'add'    ? 'block' : 'none';
+  document.getElementById('tabBatch').style.display  = tab === 'batch'  ? 'block' : 'none';
   document.getElementById('tabStatus').style.display = tab === 'status' ? 'block' : 'none';
   document.getElementById('tabBtnAdd').classList.toggle('active', tab === 'add');
+  document.getElementById('tabBtnBatch').classList.toggle('active', tab === 'batch');
   document.getElementById('tabBtnStatus').classList.toggle('active', tab === 'status');
   if (tab === 'status') loadPayments();
 }
@@ -421,6 +451,120 @@ function downloadCSV() {
   a.download = 'ELIZ款項認領.csv';
   a.click();
   URL.revokeObjectURL(url);
+}
+
+// ====== 批次匯入 ======
+let batchParsed = [];
+
+function parseBatch() {
+  const raw = document.getElementById('batchInput').value.trim();
+  if (!raw) { showToast('請先貼上銀行明細'); return; }
+
+  const lines = raw.split('\n').map(function(l) { return l.trim(); }).filter(Boolean);
+  const valid = [], errors = [];
+
+  // 日期正規：2025/01/20 或 01/20
+  // 金額：$28,000 或 28,000 或 28000
+  // 識別碼（可選）：(#57635) 或 (王進福) 或無
+  const re = /^\d*[.)]\s*(\d{4}\/\d{1,2}\/\d{1,2}|\d{1,2}\/\d{1,2})\s+\$?([\d,]+)(?:\s+\(([^)]+)\))?/;
+
+  const thisYear = new Date().getFullYear();
+
+  lines.forEach(function(line, idx) {
+    const m = line.match(re);
+    if (!m) {
+      // 嘗試無序號格式
+      const re2 = /^(\d{4}\/\d{1,2}\/\d{1,2}|\d{1,2}\/\d{1,2})\s+\$?([\d,]+)(?:\s+\(([^)]+)\))?/;
+      const m2 = line.match(re2);
+      if (!m2) { errors.push('第 ' + (idx + 1) + ' 行無法解析：' + line); return; }
+      processMatch(m2, idx, valid);
+    } else {
+      processMatch(m, idx, valid);
+    }
+  });
+
+  function processMatch(m, idx, valid) {
+    let dateStr = m[1];
+    // 補年份
+    if (!dateStr.match(/^\d{4}/)) {
+      dateStr = thisYear + '/' + dateStr;
+    }
+    // 轉為 YYYY-MM-DD
+    const parts = dateStr.split('/');
+    const isoDate = parts[0] + '-' + parts[1].padStart(2,'0') + '-' + parts[2].padStart(2,'0');
+    const amount  = parseInt(m[2].replace(/,/g, ''), 10);
+    if (isNaN(amount) || amount <= 0) { errors.push('第 ' + (idx + 1) + ' 行金額有誤'); return; }
+
+    const ident = m[3] ? m[3].trim() : '';
+    let last5 = '', customerName = '';
+    if (ident.startsWith('#')) {
+      last5 = ident.slice(1).trim();
+    } else if (ident) {
+      customerName = ident;
+    }
+
+    valid.push({ paymentDate: isoDate, amount: amount, last5digits: last5, customerName: customerName });
+  }
+
+  batchParsed = valid;
+
+  const preview  = document.getElementById('batchPreview');
+  const title    = document.getElementById('batchPreviewTitle');
+  const list     = document.getElementById('batchPreviewList');
+  const errList  = document.getElementById('batchErrorList');
+  const submitBtn = document.getElementById('batchSubmitBtn');
+
+  preview.style.display = 'block';
+  title.textContent = '解析結果：' + valid.length + ' 筆可匯入' + (errors.length ? '，' + errors.length + ' 筆無法解析' : '');
+  title.style.color = valid.length > 0 ? '#16A34A' : '#DC2626';
+
+  list.innerHTML = '';
+  valid.forEach(function(r, i) {
+    const div = document.createElement('div');
+    div.style.cssText = 'padding:8px 12px;border:2px solid #86EFAC;border-radius:8px;background:#F0FDF4;margin-bottom:6px;font-size:13px;font-weight:600;';
+    div.textContent = '✓ ' + r.paymentDate + '　$' + r.amount.toLocaleString() +
+      (r.last5digits ? '　末五碼：' + r.last5digits : '') +
+      (r.customerName ? '　客戶：' + r.customerName : '');
+    list.appendChild(div);
+  });
+
+  errList.innerHTML = '';
+  errors.forEach(function(e) {
+    const div = document.createElement('div');
+    div.style.cssText = 'padding:6px 10px;border:1px solid #FCA5A5;border-radius:6px;background:#FEF2F2;margin-bottom:4px;font-size:12px;color:#DC2626;';
+    div.textContent = '✗ ' + e;
+    errList.appendChild(div);
+  });
+
+  submitBtn.style.display = valid.length > 0 ? 'block' : 'none';
+}
+
+function submitBatch() {
+  if (!batchParsed.length) { showToast('沒有可匯入的記錄'); return; }
+  const btn = document.getElementById('batchSubmitBtn');
+  btn.disabled = true; btn.textContent = '匯入中...';
+
+  fetch(GAS_API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({ action: 'batchAddPayments', records: batchParsed })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(result) {
+    if (result.success) {
+      showToast('✅ 已新增 ' + result.count + ' 筆款項，請記得發送通知');
+      document.getElementById('batchInput').value = '';
+      document.getElementById('batchPreview').style.display = 'none';
+      batchParsed = [];
+    } else {
+      showToast('匯入失敗：' + (result.error || '未知錯誤'));
+    }
+    btn.disabled = false; btn.textContent = '確認批次新增';
+  })
+  .catch(function() {
+    showToast('網路錯誤，請重試');
+    btn.disabled = false; btn.textContent = '確認批次新增';
+  });
 }
 
 // ====== Toast ======
